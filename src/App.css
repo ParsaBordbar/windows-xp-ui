@@ -1,7 +1,8 @@
+/* Window Styles */
 .window {
   position: absolute;
   border: 1px solid black;
-  background-color: white;
+  background-color: rgb(0, 0, 0);
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
   overflow: hidden;
   display: flex;
@@ -9,6 +10,8 @@
   resize: both;
   max-width: 90vw; /* Responsive width */
   max-height: 90vh; /* Responsive height */
+  z-index: 10000; /* Ensure this is the highest z-index */
+  display: none;
 }
 
 .title-bar {
@@ -74,48 +77,65 @@ input[type="text"] {
   bottom: 0;
   cursor: se-resize;
 }
+
+/* Taskbar Styles */
 .taskbar {
   position: fixed;
   bottom: 0;
   width: 100%;
   height: 40px; /* Height similar to the Windows taskbar */
-  background: linear-gradient(
-    to right,
-    #0078d4,
-    /* Windows taskbar blue */ #1a1a1a /* Dark gray */
-  );
+  background: linear-gradient(to right, #0078d4, #1a1a1a);
   color: #ffffff; /* Text color */
   box-shadow: 0 -1px 5px rgba(0, 0, 0, 0.2); /* Subtle shadow */
   display: flex;
   align-items: center;
   box-sizing: border-box;
+  z-index: 10000; /* Ensure taskbar is above other elements */
 }
 
 /* Taskbar Items */
+.taskbar-start {
+  position: absolute;
+  left: 0px; /* Adjusted to be properly visible */
+  margin-left: -7px;
+  z-index: 10001; /* Ensure Start icon is above other taskbar items */
+}
+/* Taskbar Clock */
+.taskbar-end {
+  position: absolute;
+  right: 10px; /* Adjusted to be properly visible */
+  z-index: 10001; /* Ensure Start icon is above other taskbar items */
+}
+.taskbar-open-windows {
+  display: flex;
+  align-items: center;
+  margin-left: 130px; /* Ensure space is reserved for Start icon */
+  z-index: 10002; /* Ensure open windows icons are above the Start icon */
+}
+
 .taskbar-item {
-  margin: 0 0px;
   display: flex;
   align-items: center;
   color: #ffffff;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-}
-
-.taskbar-item img {
-  height: 24px; /* Adjust size of icons */
-  margin-right: 5px; /* Space between icon and text */
+  background-color: #0a246a69;
   cursor: pointer;
+  border-radius: 2px;
+  padding-left: 5px;
+  padding-right: 10px;
+  font-size: 12px;
+  margin-right: 5px;
 }
 
-.taskbar-start {
-  position: absolute;
+.taskbar-icon {
+  width: 35px; /* Size of taskbar icons */
+  height: 35px;
+  margin-right: 1px; /* Space between icons */
+  z-index: 10002; /* Ensure icons are above the Start icon */
 }
-
-.taskbar-end {
-  position: absolute;
-  right: 10px;
+#taskbarText {
+  margin-left: 5px;
 }
-
-/* Clock Style (example) */
 .taskbar-clock {
   margin-left: auto;
   font-size: 14px;
@@ -128,22 +148,33 @@ input[type="text"] {
 .taskbar-system-tray {
   display: flex;
   align-items: center;
+  background-color: inherit !important;
 }
+
 #startIcon {
-  width: 80%;
+  width: 120px;
   height: 40px;
   cursor: pointer;
+  z-index: 10001; /* Ensure Start icon is above other elements */
 }
+
 .taskItems {
   margin-left: 20px;
-  align-items: center;
+  display: none;
   justify-content: center;
-  display: flex;
+  align-items: center;
+  padding-left: 10px;
+  padding-right: 10px;
+  background-color: #0a246a66;
 }
+
 #cmd {
+  margin: auto;
   width: 35px;
   height: 35px;
+  align-self: center;
 }
+
 .icons {
   display: grid;
   position: fixed;
@@ -152,22 +183,32 @@ input[type="text"] {
   margin: 1px;
   z-index: 1;
 }
+
 .program {
   display: grid;
   justify-content: center;
   text-align: center;
   user-select: none;
+  margin-bottom: 5px;
   cursor: pointer;
 }
+
+.program.selected {
+  background-color: #3399ff75; /* Windows XP blue highlight */
+  color: white;
+}
+
 #programName {
   font-size: 12px;
   color: white;
   margin-top: -10px;
   text-shadow: 2px 1px #000000;
 }
+
 #iconImage {
   width: 120px;
 }
+
 .startMenu {
   position: fixed;
   bottom: 0;
@@ -179,5 +220,57 @@ input[type="text"] {
   width: 400px;
   height: 70%;
   display: none;
-  z-index: 999;
+  z-index: 9998; /* Ensure Start menu is below other taskbar items */
+}
+
+.app-container {
+  width: 100%;
+  height: 100vh;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  overflow: hidden;
+}
+
+.selection-rectangle {
+  position: absolute;
+  border: 2px solid #3399ff; /* Blue border */
+  background-color: rgba(
+    51,
+    153,
+    255,
+    0.2
+  ); /* Semi-transparent blue background */
+  pointer-events: none; /* Prevent the rectangle from interfering with mouse events */
+  z-index: 1000; /* Ensure it's on top of other elements */
+}
+
+.context-menu {
+  position: absolute;
+  width: 200px;
+  background-color: rgb(238, 238, 238);
+  border: 1px solid #c0c0c0;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+  z-index: 10000; /* Ensure context menu is above other elements */
+  padding: 0;
+  margin: 0;
+}
+
+.context-menu ul {
+  list-style: none;
+  padding: 5px 0;
+  margin: 0;
+}
+
+.context-menu li {
+  padding: 5px 15px;
+  cursor: pointer;
+  font-family: Tahoma, sans-serif;
+  font-size: 14px;
+  color: #000000;
+}
+
+.context-menu li:hover {
+  background-color: #0a246a; /* Windows XP blue hover */
+  color: #ffffff;
 }
