@@ -152,6 +152,8 @@ input[type="text"] {
 }
 
 #startIcon {
+  position:fixed;
+  bottom: 0;
   width: 120px;
   height: 40px;
   cursor: pointer;
@@ -273,4 +275,9 @@ input[type="text"] {
 .context-menu li:hover {
   background-color: #0a246a; /* Windows XP blue hover */
   color: #ffffff;
+}
+#taskImage {
+  width: 30px;
+  height: 30px;
+  border-radius: 2px;
 }

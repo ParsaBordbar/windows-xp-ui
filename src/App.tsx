@@ -238,7 +238,10 @@ const App: React.FC = () => {
   };
 
   let date = new Date();
-  let current_time = date.getHours() + ":" + date.getMinutes();
+  let hour = date.getHours();
+  let minute = date.getMinutes();
+
+  let current_time = (hour<10 ? '0' + hour : hour) + ":" + (minute < 10 ? '0' + minute : minute);
 
   const startSelection = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.button === 0) {
@@ -319,7 +322,7 @@ const App: React.FC = () => {
         <div className="taskbar-open-windows">
           {openWindows.includes("myComputer") && (
             <div className="taskbar-item">
-              <img
+              <img id="taskImage"
                 src={computer}
                 alt="My Computer"
                 className="taskbar-icon"
@@ -330,7 +333,7 @@ const App: React.FC = () => {
           )}
           {openWindows.includes("recycleBin") && (
             <div className="taskbar-item">
-              <img
+              <img id="taskImage"
                 src={trashbin}
                 alt="Recycle Bin"
                 className="taskbar-icon"
@@ -341,24 +344,25 @@ const App: React.FC = () => {
           )}
           {openWindows.includes("profile") && (
             <div className="taskbar-item">
-              <img
+              <img id="taskImage"
                 src={profileImg}
+
                 alt="Profile"
                 className="taskbar-icon"
                 onClick={() => setSelectedWindow("profile")}
               />
-              <p id="taskbarText">Mehdi</p>
+              <p id="taskbarText">Mehdi Tohidi</p>
             </div>
           )}
           {openWindows.includes("commandPrompt") && (
             <div className="taskbar-item">
-              <img
+              <img id="taskImage"
                 src={cmd}
                 alt="Command Prompt"
                 className="taskbar-icon"
                 onClick={() => setSelectedWindow("commandPrompt")}
               />
-              <p id="taskbarText">CMD</p>
+              <p id="taskbarText">Command Prompt</p>
             </div>
           )}
         </div>
