@@ -5,14 +5,23 @@
   background-color: rgb(0, 0, 0);
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
   overflow: hidden;
-  display: flex;
+  margin: auto;
   flex-direction: column;
   resize: both;
-  max-width: 90vw; /* Responsive width */
-  max-height: 90vh; /* Responsive height */
-  z-index: 10000; /* Ensure this is the highest z-index */
+  max-width: 90vw;
+  max-height: 90vh;
+  z-index: 10000;
   display: none;
+
+  /* Ensure the window stays within the viewport */
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: auto;
 }
+
+
 
 .title-bar {
   background-color: #2b2b2b;
@@ -107,6 +116,8 @@ input[type="text"] {
   z-index: 10001; /* Ensure Start icon is above other taskbar items */
 }
 .taskbar-open-windows {
+  max-width: 40%;
+  overflow-x: hidden;
   display: flex;
   align-items: center;
   margin-left: 130px; /* Ensure space is reserved for Start icon */
@@ -125,6 +136,8 @@ input[type="text"] {
   padding-right: 10px;
   font-size: 12px;
   margin-right: 5px;
+  max-height: 40px;
+  overflow-y: hidden;
 }
 
 .taskbar-icon {

@@ -124,18 +124,30 @@ const App: React.FC = () => {
       handleContextMenu(e);
     }
   };
+  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+    const touch = e.touches[0];
+    setDragging(true);
+    offset.current = {
+      x: touch.clientX - position.x,
+      y: touch.clientY - position.y,
+    };
+  };
 
+  const handleTouchEnd = () => {
+    setDragging(false);
+  };
   const handleMouseMove = (e: MouseEvent) => {
     if (dragging) {
-      setPosition({
-        x: e.clientX - offset.current.x,
-        y: e.clientY - offset.current.y,
-      });
-    } else if (resizing) {
-      setSize({
-        width: startSize.current.width + (e.clientX - offset.current.x),
-        height: startSize.current.height + (e.clientY - offset.current.y),
-      });
+      let newX = e.clientX - offset.current.x;
+      let newY = e.clientY - offset.current.y;
+  
+      // Prevent window from going off-screen
+      if (newX < 0) newX = 0;
+      if (newY < 0) newY = 0;
+      if (newX + size.width > window.innerWidth) newX = window.innerWidth - size.width;
+      if (newY + size.height > window.innerHeight) newY = window.innerHeight - size.height;
+  
+      setPosition({ x: newX, y: newY });
     } else if (isSelecting && startSelectionCoords.current) {
       const rect = containerRef.current?.getBoundingClientRect();
       if (rect) {
@@ -154,6 +166,8 @@ const App: React.FC = () => {
     }
   };
 
+  
+
   const handleMouseUp = () => {
     setDragging(false);
     setResizing(false);
@@ -168,14 +182,48 @@ const App: React.FC = () => {
   };
 
   useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (dragging) {
+        setPosition({
+          x: e.clientX - offset.current.x,
+          y: e.clientY - offset.current.y,
+        });
+      } else if (resizing) {
+        setSize({
+          width: startSize.current.width + (e.clientX - offset.current.x),
+          height: startSize.current.height + (e.clientY - offset.current.y),
+        });
+      } else if (isSelecting && startSelectionCoords.current) {
+        const rect = containerRef.current?.getBoundingClientRect();
+        if (rect) {
+          const startX = startSelectionCoords.current.x;
+          const startY = startSelectionCoords.current.y;
+          const currentX = e.clientX - rect.left;
+          const currentY = e.clientY - rect.top;
+  
+          setSelection({
+            x: Math.min(startX, currentX),
+            y: Math.min(startY, currentY),
+            width: Math.abs(currentX - startX),
+            height: Math.abs(currentY - startY),
+          });
+        }
+      }
+    };
+  
     document.addEventListener("mousemove", handleMouseMove);
     document.addEventListener("mouseup", handleMouseUp);
-
+    document.addEventListener("touchmove", handleTouchMove);
+    document.addEventListener("touchend", handleTouchEnd);
+  
     return () => {
       document.removeEventListener("mousemove", handleMouseMove);
       document.removeEventListener("mouseup", handleMouseUp);
+      document.removeEventListener("touchmove", handleTouchMove);
+      document.removeEventListener("touchend", handleTouchEnd);
     };
   }, [dragging, resizing, isSelecting]);
+  
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
@@ -211,6 +259,33 @@ const App: React.FC = () => {
     }
   };
 
+  const handleTouchMove = (e: TouchEvent) => {
+    console.log("Touch Move: ", e.touches[0].clientX, e.touches[0].clientY);
+    if (dragging) {
+      const touch = e.touches[0];
+      setPosition({
+        x: touch.clientX - offset.current.x,
+        y: touch.clientY - offset.current.y,
+      });
+    } else if (isSelecting && startSelectionCoords.current) {
+      const rect = containerRef.current?.getBoundingClientRect();
+      if (rect) {
+        const touch = e.touches[0];
+        const startX = startSelectionCoords.current.x;
+        const startY = startSelectionCoords.current.y;
+        const currentX = touch.clientX - offset.current.x;
+        const currentY = touch.clientY - offset.current.y;
+
+        setSelection({
+          x: Math.min(startX, currentX),
+          y: Math.min(startY, currentY),
+          width: Math.abs(currentX - startX),
+          height: Math.abs(currentY - startY),
+        });
+      }
+    }
+  };
+
   const handleProgramClick = (programId: string) => {
     if (clickTimeout.current) {
       clearTimeout(clickTimeout.current);
@@ -243,24 +318,43 @@ const App: React.FC = () => {
 
   let current_time = (hour<10 ? '0' + hour : hour) + ":" + (minute < 10 ? '0' + minute : minute);
 
-  const startSelection = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (e.button === 0) {
-      // Left click
-      e.preventDefault();
-      const rect = containerRef.current?.getBoundingClientRect();
-      if (rect) {
-        startSelectionCoords.current = {
-          x: e.clientX - rect.left,
-          y: e.clientY - rect.top,
-        };
-        setIsSelecting(true);
-      }
+  const startSelection = (
+    e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>
+  ) => {
+    const isTouchEvent = e.type === "touchstart";
+    const clientX = isTouchEvent
+      ? (e as React.TouchEvent).touches[0].clientX
+      : (e as React.MouseEvent).clientX;
+    const clientY = isTouchEvent
+      ? (e as React.TouchEvent).touches[0].clientY
+      : (e as React.MouseEvent).clientY;
+  
+    // If it's a mouse event, check if it's a left click
+    if (!isTouchEvent && (e as React.MouseEvent).button !== 0) {
+      return; // Not a left click, so we ignore it
+    }
+  
+    e.preventDefault();
+    const rect = containerRef.current?.getBoundingClientRect();
+    if (rect) {
+      startSelectionCoords.current = {
+        x: clientX - rect.left,
+        y: clientY - rect.top,
+      };
+      setIsSelecting(true);
     }
   };
+  
 
   const endSelection = () => {
     setIsSelecting(false);
     startSelectionCoords.current = null; // Clear the initial position
+    setSelection({
+      x: Math.min(0, 0),
+      y: Math.min(0, 0),
+      width: Math.abs(0),
+      height: Math.abs(0),
+    });
   };
 
   return (
@@ -275,11 +369,20 @@ const App: React.FC = () => {
           height: `${size.height}px`,
         }}
       >
-        <div className="title-bar" onMouseDown={handleMouseDown}>
+        <div className="title-bar" onMouseDown={handleMouseDown} onTouchStart={handleTouchStart}>
           <div className="title">Command Prompt {">"} MehdiTohidi.com</div>
           <button
             className="close"
-            onClick={() => closeWindow("commandPrompt")}
+            onClick={() => {
+               closeWindow("commandPrompt");
+               setSelection({
+                x: Math.min(0, 0),
+                y: Math.min(0, 0),
+                width: Math.abs(0),
+                height: Math.abs(0),
+              });
+            }
+          }
           ></button>
         </div>
         <div className="terminal">
@@ -299,6 +402,7 @@ const App: React.FC = () => {
         <div
           className="resize-handle"
           onMouseDown={handleResizeMouseDown}
+          onTouchStart={handleTouchStart}
         ></div>
       </div>
 
@@ -440,6 +544,8 @@ const App: React.FC = () => {
       {/* App Container */}
       <div
         onMouseDown={startSelection}
+        onTouchStart={startSelection}
+        onTouchEnd={endSelection}
         onMouseUp={endSelection}
         onMouseMove={(e) => handleMouseMove(e as any)} // Cast to any to match MouseEvent type
         onContextMenu={handleContextMenu}
