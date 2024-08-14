@@ -1,38 +1,183 @@
-.App {
-  text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.window {
+  position: absolute;
+  border: 1px solid black;
+  background-color: white;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
   display: flex;
   flex-direction: column;
+  resize: both;
+  max-width: 90vw; /* Responsive width */
+  max-height: 90vh; /* Responsive height */
+}
+
+.title-bar {
+  background-color: #2b2b2b;
+  color: white;
+  padding: 5px;
+  cursor: move;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.title {
+  user-select: none;
+}
+
+.close {
+  background-color: red;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+}
+
+.terminal {
+  flex: 1;
+  padding: 10px;
+  background-color: black;
+  color: white;
+  font-family: "Consolas", "Courier New", monospace;
+  overflow-y: auto;
+  font-size: 16px;
+  z-index: 999;
+}
+
+.input-line {
+  display: flex;
+  align-items: center;
+}
+
+.prompt {
+  margin-right: 5px;
+  font-size: 16px;
+}
+
+input[type="text"] {
+  background: transparent;
+  border: none;
+  color: white;
+  outline: none;
+  flex: 1;
+  font-family: "Consolas", "Courier New", monospace;
+  font-size: 16px;
+}
+
+.resize-handle {
+  width: 15px;
+  height: 15px;
+  background-color: #333;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  cursor: se-resize;
+}
+.taskbar {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  height: 40px; /* Height similar to the Windows taskbar */
+  background: linear-gradient(
+    to right,
+    #0078d4,
+    /* Windows taskbar blue */ #1a1a1a /* Dark gray */
+  );
+  color: #ffffff; /* Text color */
+  box-shadow: 0 -1px 5px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+/* Taskbar Items */
+.taskbar-item {
+  margin: 0 0px;
+  display: flex;
+  align-items: center;
+  color: #ffffff;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.taskbar-item img {
+  height: 24px; /* Adjust size of icons */
+  margin-right: 5px; /* Space between icon and text */
+  cursor: pointer;
+}
+
+.taskbar-start {
+  position: absolute;
+}
+
+.taskbar-end {
+  position: absolute;
+  right: 10px;
+}
+
+/* Clock Style (example) */
+.taskbar-clock {
+  margin-left: auto;
+  font-size: 14px;
+  font-weight: bold;
+  font-family: monospace;
+}
+
+/* Optional: Styling for start menu or system tray (placeholders) */
+.taskbar-start-menu,
+.taskbar-system-tray {
+  display: flex;
+  align-items: center;
+}
+#startIcon {
+  width: 80%;
+  height: 40px;
+  cursor: pointer;
+}
+.taskItems {
+  margin-left: 20px;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
+  display: flex;
+}
+#cmd {
+  width: 35px;
+  height: 35px;
+}
+.icons {
+  display: grid;
+  position: fixed;
+  top: 0;
+  left: 0;
+  margin: 1px;
+  z-index: 1;
+}
+.program {
+  display: grid;
+  justify-content: center;
+  text-align: center;
+  user-select: none;
+  cursor: pointer;
+}
+#programName {
+  font-size: 12px;
   color: white;
+  margin-top: -10px;
+  text-shadow: 2px 1px #000000;
 }
-
-.App-link {
-  color: #61dafb;
+#iconImage {
+  width: 120px;
 }
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.startMenu {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  margin-bottom: 40px;
+  background-image: url(./img/menu.gif);
+  background-size: contain;
+  background-repeat: no-repeat;
+  width: 400px;
+  height: 70%;
+  display: none;
+  z-index: 999;
 }
