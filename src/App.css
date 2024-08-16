@@ -384,7 +384,7 @@ input[type="text"] {
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  background-image: url("./img/ambience.gif");
+
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;

@@ -5,6 +5,8 @@ import "./Explorer.css";
 import myComputerIcon from "./img/computer.png";
 import folderIcon from "./img/document.png";
 import fileIcon from "./img/mp3.png";
+import audiofile from "./music/music.mp3";
+import { ambience } from "./img";
 import {
   computer,
   profileImg,
@@ -27,6 +29,8 @@ import {
   dance,
   textIcon,
 } from "./img";
+
+const screen = document.querySelector(".screen-content") as HTMLElement | null;
 
 const App: React.FC = () => {
   const [commands, setCommands] = useState<string[]>([]);
@@ -517,18 +521,6 @@ const App: React.FC = () => {
     }
   };
 
-  if (openWindows.includes("mediaPlayer")) {
-    playMusic();
-    const lights = document.querySelector(
-      ".party-lights"
-    ) as HTMLElement | null;
-    const dancing = document.querySelector(".dancing") as HTMLElement | null;
-    if (dancing && lights) {
-      dancing.style.display = "block";
-      lights.style.display = "block";
-    }
-  }
-
   let date = new Date();
   let hour = date.getHours();
   let minute = date.getMinutes();
@@ -740,10 +732,6 @@ const App: React.FC = () => {
           <button
             className="close"
             onClick={() => {
-              if (music) {
-                music.pause();
-                music.currentTime = 0;
-              }
               closeWindow("documents");
               setSelection({
                 x: Math.min(0, 0),
@@ -845,10 +833,7 @@ const App: React.FC = () => {
             <div className="screen-content"></div>
           </div>
           <div className="controls-bar">
-            <audio
-              id="music"
-              src="https://ts1.tarafdari.com/contents/user376430/content-sound/michael_jackson_-_billie_jean.mp3"
-            ></audio>
+            <audio id="music" src={audiofile}></audio>
             <button id="control-button" className="control-button prev">
               |◀
             </button>
@@ -864,6 +849,13 @@ const App: React.FC = () => {
                   document.querySelector<HTMLElement>(".screen-content");
                 if (music && screen) {
                   music.play();
+                  screen.style.backgroundImage = "url('" + ambience + "')";
+                  const lights = document.querySelector(
+                    ".party-lights"
+                  ) as HTMLElement | null;
+                  if (lights) {
+                    lights.style.display = "block";
+                  }
                   const dancing = document.querySelector(
                     ".dancing"
                   ) as HTMLElement | null;
@@ -885,13 +877,18 @@ const App: React.FC = () => {
                 const music = document.querySelector(
                   "#music"
                 ) as HTMLAudioElement | null;
-                if (music) {
+                if (screen && music) {
                   music.pause();
+                  screen.style.backgroundImage = "url('" + playCover + "')";
+                  const lights = document.querySelector(
+                    ".party-lights"
+                  ) as HTMLElement | null;
                   const dancing = document.querySelector(
                     ".dancing"
                   ) as HTMLElement | null;
-                  if (dancing) {
+                  if (dancing && lights) {
                     dancing.style.display = "none";
+                    lights.style.display = "none";
                   }
                 }
               }}
@@ -905,14 +902,19 @@ const App: React.FC = () => {
                 const music = document.querySelector(
                   "#music"
                 ) as HTMLAudioElement | null;
-                if (music) {
+                if (music && screen) {
+                  screen.style.backgroundImage = "url('" + playCover + "')";
                   music.pause();
                   music.currentTime = 0;
+                  const lights = document.querySelector(
+                    ".party-lights"
+                  ) as HTMLElement | null;
                   const dancing = document.querySelector(
                     ".dancing"
                   ) as HTMLElement | null;
-                  if (dancing) {
+                  if (dancing && lights) {
                     dancing.style.display = "none";
+                    lights.style.display = "none";
                   }
                 }
               }}
