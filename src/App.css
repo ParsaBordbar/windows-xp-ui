@@ -16,12 +16,8 @@
   /* Ensure the window stays within the viewport */
   top: 0;
   left: 0;
-  right: 0;
-  bottom: 0;
   margin: auto;
 }
-
-
 
 .title-bar {
   background-color: #2b2b2b;
@@ -38,12 +34,18 @@
 }
 
 .close {
-  background-color: red;
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
+  background-color: white;
+  border-radius: 5px;
+  background-image: url("./img/close.png");
+  height: 20px;
+  width: 20px;
   border: none;
   cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  font-size: 12px;
 }
 
 .terminal {
@@ -112,11 +114,13 @@ input[type="text"] {
 /* Taskbar Clock */
 .taskbar-end {
   position: absolute;
-  right: 10px; /* Adjusted to be properly visible */
+  right: 20px; /* Adjusted to be properly visible */
   z-index: 10001; /* Ensure Start icon is above other taskbar items */
 }
 .taskbar-open-windows {
   max-width: 40%;
+  height: 35px;
+  overflow-y: hidden;
   overflow-x: hidden;
   display: flex;
   align-items: center;
@@ -134,10 +138,11 @@ input[type="text"] {
   border-radius: 2px;
   padding-left: 5px;
   padding-right: 10px;
-  font-size: 12px;
-  margin-right: 5px;
+  font-size: 10px;
+  margin-right: 2px;
   max-height: 40px;
   overflow-y: hidden;
+  border-radius: 2px;
 }
 
 .taskbar-icon {
@@ -154,6 +159,7 @@ input[type="text"] {
   font-size: 14px;
   font-weight: bold;
   font-family: monospace;
+  user-select: none;
 }
 
 /* Optional: Styling for start menu or system tray (placeholders) */
@@ -165,7 +171,7 @@ input[type="text"] {
 }
 
 #startIcon {
-  position:fixed;
+  position: fixed;
   bottom: 0;
   width: 120px;
   height: 40px;
@@ -193,10 +199,15 @@ input[type="text"] {
 .icons {
   display: grid;
   position: fixed;
-  top: 0;
-  left: 0;
+  top: 5px;
+  left: 5px;
   margin: 1px;
-  z-index: 1;
+  margin-top: 10px;
+  z-index: 0;
+}
+
+#menuIcons {
+  justify-self: start;
 }
 
 .program {
@@ -262,7 +273,7 @@ input[type="text"] {
 
 .context-menu {
   position: absolute;
-  width: 200px;
+  width: 220px;
   background-color: rgb(238, 238, 238);
   border: 1px solid #c0c0c0;
   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
@@ -283,6 +294,8 @@ input[type="text"] {
   font-family: Tahoma, sans-serif;
   font-size: 14px;
   color: #000000;
+  display: flex;
+  align-items: center;
 }
 
 .context-menu li:hover {
@@ -293,4 +306,419 @@ input[type="text"] {
   width: 30px;
   height: 30px;
   border-radius: 2px;
+}
+.aboutMe {
+  flex: 1;
+  padding: 10px;
+  background-color: black;
+  color: white;
+  font-family: "Consolas", "Courier New", monospace;
+  overflow-y: auto;
+  font-size: 16px;
+  z-index: 999;
+  user-select: none;
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+}
+#skills {
+  color: greenyellow;
+  font-size: 16px;
+}
+#socials {
+  width: 25px;
+  margin-right: 5px;
+}
+
+.media-player {
+  width: 350px;
+  border: 2px solid #ccc;
+  border-radius: 5px;
+  background-color: #f0f0f0;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.title-bar {
+  background-color: #003366;
+  color: white;
+  padding: 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+}
+
+.title-bar .title {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.controls {
+  display: flex;
+}
+
+.control-button {
+  background: #0078d7;
+  color: white;
+  border: none;
+  padding: 2px 5px;
+  margin-left: 3px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.control-button.close {
+  background: #cc0000;
+}
+
+.screen {
+  padding: 10px;
+  text-align: center;
+  color: white;
+}
+
+.screen-content {
+  margin: 0;
+  width: 100%;
+  height: 20vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  background-image: url("./img/ambience.gif");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  border-radius: 10px;
+  position: relative;
+}
+
+.album-art {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.track-info {
+  font-size: 12px;
+  float: right;
+}
+
+.controls-bar {
+  display: flex;
+  justify-content: space-around;
+  padding: 5px;
+  background: #444;
+}
+#control-button {
+  border-radius: 50%;
+  height: 30px;
+  width: 30px;
+  font-size: 12px;
+  background: #27002c;
+  border: white solid 1px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  padding: 2px;
+}
+.controls-bar .control-button {
+  font-size: 16px;
+
+  border-radius: 5px;
+  padding: 5px;
+}
+
+.volume-bar {
+  display: flex;
+  align-items: center;
+  padding: 5px;
+}
+
+.volume-icon {
+  margin-right: 5px;
+  font-size: 16px;
+}
+
+.volume-slider {
+  flex-grow: 1;
+  background: #888;
+  height: 5px;
+  border-radius: 5px;
+  position: relative;
+}
+
+.volume-level {
+  background: #006400;
+  height: 100%;
+  border-radius: 5px;
+}
+
+.status-bar {
+  display: flex;
+  justify-content: space-between;
+  padding: 5px;
+  background: #444;
+  color: white;
+  font-size: 12px;
+}
+
+.progress-bar {
+  flex-grow: 1;
+  margin-left: 5px;
+  background: #888;
+  height: 5px;
+  border-radius: 5px;
+  position: relative;
+}
+
+.album-art {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 10px;
+}
+
+.track-info {
+  font-size: 12px;
+}
+
+.controls-bar {
+  display: flex;
+  justify-content: space-around;
+  padding: 5px;
+  background: #444;
+}
+
+.controls-bar .control-button {
+  font-size: 16px;
+  background: #0078d7;
+  border-radius: 5px;
+  padding: 5px;
+}
+
+.volume-bar {
+  display: flex;
+  align-items: center;
+  padding: 5px;
+  background: #444;
+}
+
+.volume-icon {
+  margin-right: 5px;
+  font-size: 16px;
+}
+
+.volume-slider {
+  flex-grow: 1;
+  background: #888;
+  height: 5px;
+  border-radius: 5px;
+  position: relative;
+}
+
+.volume-level {
+  background: #00cc00;
+  height: 100%;
+  border-radius: 5px;
+}
+
+.status-bar {
+  display: flex;
+  justify-content: space-between;
+  padding: 5px;
+  background: #444;
+  color: white;
+  font-size: 12px;
+}
+
+.progress-bar {
+  flex-grow: 1;
+  margin-left: 5px;
+  background: #888;
+  height: 5px;
+  border-radius: 5px;
+  position: relative;
+}
+
+.progress-level {
+  background: #00cc00;
+  height: 100%;
+  border-radius: 5px;
+}
+#mediaPlayer {
+  overflow-x: hidden;
+}
+.start-menu {
+  position: absolute;
+  bottom: 70px;
+  left: 1px;
+  width: 300px;
+  height: 500px;
+  background-color: #bfbfbf;
+  border: 1px solid #4a4a4a;
+  box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.5);
+  z-index: 10000;
+  display: none;
+}
+
+.start-menu-header {
+  background-color: #3a6ea5;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.user-image {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+.username {
+  color: white;
+  font-weight: bold;
+  font-family: Tahoma, sans-serif;
+  font-size: 14px;
+}
+
+.start-menu-content {
+  display: flex;
+  background-color: #e4e4e4;
+  height: calc(100% - 100px);
+}
+
+.menu-column {
+  width: 50%;
+  padding: 10px;
+}
+
+.menu-column ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.menu-column li {
+  display: flex;
+  align-items: center;
+  padding: 5px;
+  margin-bottom: 5px;
+  cursor: pointer;
+  background-color: #e4e4e4;
+  font-family: Tahoma, sans-serif;
+  font-size: 12px;
+}
+
+.menu-column li:hover {
+  background-color: #9bb3e8;
+}
+
+.menu-column img {
+  width: 20px;
+  height: 20px;
+  margin-right: 10px;
+}
+
+.start-menu-footer {
+  background-color: #3a6ea5;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.start-menu-footer button {
+  background-color: #bfbfbf;
+  border: 1px solid #4a4a4a;
+  padding: 5px 10px;
+  font-family: Tahoma, sans-serif;
+  cursor: pointer;
+}
+
+.start-menu-footer button:hover {
+  background-color: #dcdcdc;
+}
+.shutdown {
+  display: flex;
+  align-items: center;
+  float: right;
+  background: none;
+  border: none;
+}
+#shutButton {
+  background-color: inherit;
+  background: none;
+  border: none;
+  color: white;
+}
+#offImg {
+  margin-right: 10px;
+  width: 30px;
+  height: 30px;
+  border-radius: 5px;
+}
+.imageShow {
+  display: none;
+  width: 100%;
+  height: 100%;
+  z-index: 100000;
+  position: fixed;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.8);
+  cursor: heart;
+}
+#images {
+  height: 50%;
+  border-radius: 5px;
+  z-index: 100000;
+}
+.dancing {
+  position: fixed;
+  bottom: 40px;
+  right: 0;
+  display: none;
+}
+#dancing {
+  width: 40vw;
+  user-select: none;
+}
+/* Base styles for the party lights */
+.party-lights {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none; /* Make sure it doesn't block other content */
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.1) 25%,
+    rgba(255, 255, 255, 0) 50%
+  );
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+}
+
+/* Animation for flashing lights */
+@keyframes flash {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.party-lights {
+  background-color: rgba(150, 0, 95, 0.341);
+  animation: flash 0.5s infinite;
+  opacity: 1;
+  display: none;
+}
+#mediaAll {
+  background-color: darkorchid;
 }

@@ -1,16 +1,105 @@
 import React, { useState, useRef, useEffect } from "react";
 import "./App.css";
-import { computer, profileImg, startIcon, trashbin, cmd } from "./img";
+import "./Media.css";
+import "./Explorer.css";
+import myComputerIcon from "./img/computer.png";
+import folderIcon from "./img/document.png";
+import fileIcon from "./img/mp3.png";
+import {
+  computer,
+  profileImg,
+  startIcon,
+  trashbin,
+  cmd,
+  instagram,
+  telegram,
+  email,
+  mediaPlayer,
+  playCover,
+  off,
+  myDocuments,
+  runApp,
+  help,
+  controlPanel,
+  searchIcon,
+  mediaMenu,
+  galleryIcon,
+  dance,
+  textIcon,
+} from "./img";
 
 const App: React.FC = () => {
   const [commands, setCommands] = useState<string[]>([]);
+  const music = document.querySelector("#music") as HTMLAudioElement | null;
+  const playMusic = () => {
+    if (music) {
+      music.play();
+    }
+  };
+
+  //Bring the apps to front!
+
+  const [zIndex, setZIndex] = useState<{ [key: string]: number }>({
+    windowCmd: 1,
+    windowMehdi: 1,
+    windowMedia: 1,
+    windowExplorer: 1,
+  });
+  const bringToFront = (windowId: string) => {
+    setZIndex((prevZIndex) => {
+      const newZIndex = { ...prevZIndex };
+      Object.keys(newZIndex).forEach((id) => {
+        if (id === windowId) {
+          newZIndex[id] = Math.max(...Object.values(newZIndex)) + 1;
+        }
+      });
+      return newZIndex;
+    });
+  };
+
+  const [folders] = useState([
+    { name: "Documents", icon: folderIcon },
+    { name: "Pictures", icon: folderIcon },
+  ]);
+
+  const [files] = useState([
+    { name: "Info.txt", icon: textIcon },
+    { name: "File2.doc", icon: fileIcon },
+    { name: "File3.pdf", icon: fileIcon },
+  ]);
+  const [draggingElementId, setDraggingElementId] = useState<string | null>(
+    null
+  );
+  const progress = document.querySelector(
+    ".progress-level"
+  ) as HTMLElement | null;
   const [refreshTime, setRefreshTime] = useState<number>(0);
-  const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [size, setSize] = useState({ width: 600, height: 400 });
+  const [musicTime, setMusicTime] = useState<number>(0);
+
+  //default positions for apps on launch
+
+  const defaultPositions = {
+    windowCmd: { x: 100, y: 100 },
+    windowMehdi: { x: 300, y: 100 },
+  };
+
+  // new positions
+
+  const [position, setPosition] = useState<{
+    [key: string]: { x: number; y: number };
+  }>({
+    windowCmd: { x: 497, y: 32 },
+    windowMehdi: { x: 402, y: 234 },
+    windowMedia: { x: 546, y: 185 },
+    windowExplorer: { x: 707, y: 116 },
+  });
+
+  const [size, setSize] = useState({ width: 300, height: 400 });
   const [dragging, setDragging] = useState<boolean>(false);
   const [resizing, setResizing] = useState<boolean>(false);
   const offset = useRef({ x: 0, y: 0 });
   const startSize = useRef({ width: 600, height: 400 });
+  const [startMenuOpened, setStartMenuOpened] = useState<boolean>(false);
   const [contextMenu, setContextMenu] = useState<{
     x: number;
     y: number;
@@ -28,6 +117,12 @@ const App: React.FC = () => {
   });
   const containerRef = useRef<HTMLDivElement>(null);
   const startSelectionCoords = useRef<{ x: number; y: number } | null>(null);
+  const [windowsState, setWindowsState] = useState({
+    commandPrompt: { x: 0, y: 0, width: 600, height: 400, dragging: false },
+    mediaPlayer: { x: 0, y: 0, width: 600, height: 400, dragging: false },
+    gallery: { x: 0, y: 0, width: 600, height: 400, dragging: false },
+    profile: { x: 0, y: 0, width: 600, height: 400, dragging: false },
+  });
 
   const handleContextMenu = (event: React.MouseEvent) => {
     event.preventDefault();
@@ -40,9 +135,6 @@ const App: React.FC = () => {
     switch (action) {
       case "refresh":
         setRefreshTime((refreshTime || 0) + 1);
-        if (refreshTime >= 2) {
-          window.location.reload();
-        }
         console.log(refreshTime);
         const icons = document.querySelector(".icons") as HTMLElement | null;
         if (icons) {
@@ -57,25 +149,31 @@ const App: React.FC = () => {
         console.log("Properties action triggered");
         // Implement properties logic
         break;
-      case "new":
+      case "socials":
         console.log("New action triggered");
         // Implement new logic
         break;
-      case "undo move":
-        console.log("Undo Move action triggered");
+      case "instagram":
+        window.open("https://instagram.com/mehditohidi_", "_blank");
         // Implement undo move logic
         break;
-      case "paste":
-        console.log("Paste action triggered");
+      case "telegram":
+        window.open("https://t.me/Themeht", "_blank");
         // Implement paste logic
         break;
-      case "paste shortcut":
-        console.log("Paste Shortcut action triggered");
-        // Implement paste shortcut logic
+      case "contact":
+        window.open("mailto:mehditohidi9@gmail.com", "_blank");
         break;
     }
   };
 
+  if (music && music.currentTime > 0 && progress) {
+    setInterval(() => {
+      setMusicTime(Math.round(music.currentTime));
+      const barTime = (music.currentTime / music.duration) * 100;
+      progress.style.width = barTime.toFixed(2) + "%";
+    }, 1000);
+  }
   const handleClick = (event: MouseEvent) => {
     const target = event.target as HTMLElement;
 
@@ -83,12 +181,50 @@ const App: React.FC = () => {
       setContextMenu(null);
     }
 
+    if (target.closest(".menu-column")) {
+      const startMenu = document.querySelector(
+        ".start-menu"
+      ) as HTMLElement | null;
+      if (startMenu) {
+        setStartMenuOpened(false);
+        startMenu.style.display = "none";
+      }
+    }
+
     if (!target.closest(".window") && !target.closest(".program")) {
       setSelectedWindow(null);
+    }
+    if (!target.closest(".start-menu") && !target.closest(".taskbar")) {
+      const startMenu = document.querySelector(
+        ".start-menu"
+      ) as HTMLElement | null;
+      if (startMenu) {
+        setStartMenuOpened(false);
+        startMenu.style.display = "none";
+      }
+    }
+    if (!target.closest("#images") && !target.closest(".user-image")) {
+      const myImage = document.querySelector(
+        ".imageShow"
+      ) as HTMLElement | null;
+      if (myImage) {
+        myImage.style.display = "none";
+      }
+    }
+    if (target.closest(".user-image")) {
+      const startMenu = document.querySelector(
+        ".start-menu"
+      ) as HTMLElement | null;
+      if (startMenu) {
+        setStartMenuOpened(false);
+        startMenu.style.display = "none";
+      }
     }
   };
 
   useEffect(() => {
+    const music = document.querySelector("#music") as HTMLAudioElement | null;
+
     document.addEventListener("click", handleClick);
     return () => {
       document.removeEventListener("click", handleClick);
@@ -99,10 +235,11 @@ const App: React.FC = () => {
     const centerWindow = () => {
       const windowWidth = window.innerWidth;
       const windowHeight = window.innerHeight;
-
       setPosition({
-        x: (windowWidth - size.width) / 2,
-        y: (windowHeight - size.height) / 2,
+        windowCmd: { x: 49, y: 10 },
+        windowMehdi: { x: 40, y: 200 },
+        windowMedia: { x: 54, y: 50 },
+        windowExplorer: { x: 77, y: 150 },
       });
     };
 
@@ -111,43 +248,65 @@ const App: React.FC = () => {
     return () => window.removeEventListener("resize", centerWindow);
   }, [size.width, size.height]);
 
-  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>, id: string) => {
     if (e.button === 0) {
-      // Left click
+      bringToFront(id);
       setDragging(true);
+      setDraggingElementId(id);
       offset.current = {
-        x: e.clientX - position.x,
-        y: e.clientY - position.y,
+        x: e.clientX - position[id]?.x,
+        y: e.clientY - position[id]?.y,
       };
     } else if (e.button === 2) {
-      // Right click
       handleContextMenu(e);
     }
   };
-  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
-    const touch = e.touches[0];
+
+  const handleTouchStart = (
+    e: React.TouchEvent<HTMLDivElement>,
+    elementId: string
+  ) => {
     setDragging(true);
-    offset.current = {
-      x: touch.clientX - position.x,
-      y: touch.clientY - position.y,
-    };
+    console.log("TouchStart Triggered for element:", elementId);
+    const touch = e.touches[0];
+    bringToFront(elementId);
+    setDraggingElementId(elementId);
+
+    const element = document.querySelector(`#${elementId}`) as HTMLElement;
+    if (element) {
+      const rect = element.getBoundingClientRect();
+      console.log("Element Rect:", rect);
+      offset.current = {
+        x: touch.clientX - rect.left,
+        y: touch.clientY - rect.top,
+      };
+      console.log("Offset Set:", offset.current);
+    } else {
+      console.error("Element not found:", elementId);
+    }
   };
 
   const handleTouchEnd = () => {
     setDragging(false);
   };
   const handleMouseMove = (e: MouseEvent) => {
-    if (dragging) {
+    if (dragging && draggingElementId) {
       let newX = e.clientX - offset.current.x;
       let newY = e.clientY - offset.current.y;
-  
-      // Prevent window from going off-screen
+
+      // Apply constraints
       if (newX < 0) newX = 0;
       if (newY < 0) newY = 0;
-      if (newX + size.width > window.innerWidth) newX = window.innerWidth - size.width;
-      if (newY + size.height > window.innerHeight) newY = window.innerHeight - size.height;
-  
-      setPosition({ x: newX, y: newY });
+      if (newX + size.width > window.innerWidth)
+        newX = window.innerWidth - size.width;
+      if (newY + size.height > window.innerHeight)
+        newY = window.innerHeight - size.height;
+
+      // Update the position for the dragged element
+      setPosition((prevPosition) => ({
+        ...prevPosition,
+        [draggingElementId]: { x: newX, y: newY },
+      }));
     } else if (isSelecting && startSelectionCoords.current) {
       const rect = containerRef.current?.getBoundingClientRect();
       if (rect) {
@@ -166,12 +325,27 @@ const App: React.FC = () => {
     }
   };
 
-  
+  const partyLights = document.getElementById("partyLights");
+  // Function to turn on the party lights
+  function turnOnLights() {
+    if (partyLights) {
+      partyLights.classList.add("on");
+    }
+  }
+
+  // Function to turn off the party lights
+  function turnOffLights() {
+    if (partyLights) {
+      partyLights.classList.remove("on");
+    }
+  }
 
   const handleMouseUp = () => {
     setDragging(false);
     setResizing(false);
     setIsSelecting(false);
+
+    // Optionally, finalize the selection rectangle here if needed
   };
 
   const handleResizeMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -183,11 +357,27 @@ const App: React.FC = () => {
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
-      if (dragging) {
-        setPosition({
-          x: e.clientX - offset.current.x,
-          y: e.clientY - offset.current.y,
-        });
+      if (dragging && draggingElementId) {
+        // Dragging logic
+        const newX = e.clientX - offset.current.x;
+        const newY = e.clientY - offset.current.y;
+
+        // Apply constraints to prevent the window from going outside the viewport
+        const windowWidth = size.width;
+        const windowHeight = size.height;
+        const constrainedX = Math.max(
+          0,
+          Math.min(newX, window.innerWidth - windowWidth)
+        );
+        const constrainedY = Math.max(
+          0,
+          Math.min(newY, window.innerHeight - windowHeight)
+        );
+
+        setPosition((prevPosition) => ({
+          ...prevPosition,
+          [draggingElementId]: { x: constrainedX, y: constrainedY },
+        }));
       } else if (resizing) {
         setSize({
           width: startSize.current.width + (e.clientX - offset.current.x),
@@ -200,7 +390,7 @@ const App: React.FC = () => {
           const startY = startSelectionCoords.current.y;
           const currentX = e.clientX - rect.left;
           const currentY = e.clientY - rect.top;
-  
+
           setSelection({
             x: Math.min(startX, currentX),
             y: Math.min(startY, currentY),
@@ -210,12 +400,12 @@ const App: React.FC = () => {
         }
       }
     };
-  
+
     document.addEventListener("mousemove", handleMouseMove);
     document.addEventListener("mouseup", handleMouseUp);
     document.addEventListener("touchmove", handleTouchMove);
     document.addEventListener("touchend", handleTouchEnd);
-  
+
     return () => {
       document.removeEventListener("mousemove", handleMouseMove);
       document.removeEventListener("mouseup", handleMouseUp);
@@ -223,7 +413,6 @@ const App: React.FC = () => {
       document.removeEventListener("touchend", handleTouchEnd);
     };
   }, [dragging, resizing, isSelecting]);
-  
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
@@ -239,7 +428,7 @@ const App: React.FC = () => {
           response = `
           Hello! I'm Mehdi Tohidi. Currently I'm living in Iran. I Can Code Everything!
 
-          Contact me by Email: Mehditohidi9@gmail.com
+          You can run the 'Mehdi Tohidi' App to know more about me.
         `;
           break;
         case "clear":
@@ -261,20 +450,36 @@ const App: React.FC = () => {
 
   const handleTouchMove = (e: TouchEvent) => {
     console.log("Touch Move: ", e.touches[0].clientX, e.touches[0].clientY);
-    if (dragging) {
+    if (dragging && draggingElementId) {
       const touch = e.touches[0];
-      setPosition({
-        x: touch.clientX - offset.current.x,
-        y: touch.clientY - offset.current.y,
-      });
+      let newX = touch.clientX - offset.current.x;
+      let newY = touch.clientY - offset.current.y;
+
+      console.log("New X:", newX, "New Y:", newY);
+
+      // Apply constraints
+      if (newX < 0) newX = 0;
+      if (newY < 0) newY = 0;
+      if (newX + size.width > window.innerWidth)
+        newX = window.innerWidth - size.width;
+      if (newY + size.height > window.innerHeight)
+        newY = window.innerHeight - size.height;
+
+      console.log("Constrained X:", newX, "Constrained Y:", newY);
+
+      // Update the position for the dragged element
+      setPosition((prevPosition) => ({
+        ...prevPosition,
+        [draggingElementId]: { x: newX, y: newY },
+      }));
     } else if (isSelecting && startSelectionCoords.current) {
       const rect = containerRef.current?.getBoundingClientRect();
       if (rect) {
         const touch = e.touches[0];
         const startX = startSelectionCoords.current.x;
         const startY = startSelectionCoords.current.y;
-        const currentX = touch.clientX - offset.current.x;
-        const currentY = touch.clientY - offset.current.y;
+        const currentX = touch.clientX - rect.left;
+        const currentY = touch.clientY - rect.top;
 
         setSelection({
           x: Math.min(startX, currentX),
@@ -312,11 +517,26 @@ const App: React.FC = () => {
     }
   };
 
+  if (openWindows.includes("mediaPlayer")) {
+    playMusic();
+    const lights = document.querySelector(
+      ".party-lights"
+    ) as HTMLElement | null;
+    const dancing = document.querySelector(".dancing") as HTMLElement | null;
+    if (dancing && lights) {
+      dancing.style.display = "block";
+      lights.style.display = "block";
+    }
+  }
+
   let date = new Date();
   let hour = date.getHours();
   let minute = date.getMinutes();
 
-  let current_time = (hour<10 ? '0' + hour : hour) + ":" + (minute < 10 ? '0' + minute : minute);
+  let current_time =
+    (hour < 10 ? "0" + hour : hour) +
+    ":" +
+    (minute < 10 ? "0" + minute : minute);
 
   const startSelection = (
     e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>
@@ -328,12 +548,12 @@ const App: React.FC = () => {
     const clientY = isTouchEvent
       ? (e as React.TouchEvent).touches[0].clientY
       : (e as React.MouseEvent).clientY;
-  
+
     // If it's a mouse event, check if it's a left click
     if (!isTouchEvent && (e as React.MouseEvent).button !== 0) {
       return; // Not a left click, so we ignore it
     }
-  
+
     e.preventDefault();
     const rect = containerRef.current?.getBoundingClientRect();
     if (rect) {
@@ -344,7 +564,6 @@ const App: React.FC = () => {
       setIsSelecting(true);
     }
   };
-  
 
   const endSelection = () => {
     setIsSelecting(false);
@@ -359,36 +578,49 @@ const App: React.FC = () => {
 
   return (
     <div className="app">
+      <div className="imageShow">
+        <img id="images" src={profileImg} />
+      </div>
       {/* Command Prompt Window */}
       <div
+        id="windowCmd"
+        onClick={() => bringToFront("windowCmd")}
         className="window"
         style={{
           display: openWindows.includes("commandPrompt") ? "flex" : "none",
-          transform: `translate(${position.x}px, ${position.y}px)`,
+          transform: `translate(${position["windowCmd"]?.x}px, ${position["windowCmd"]?.y}px)`,
           width: `${size.width}px`,
           height: `${size.height}px`,
+          zIndex: zIndex["windowCmd"],
         }}
       >
-        <div className="title-bar" onMouseDown={handleMouseDown} onTouchStart={handleTouchStart}>
-          <div className="title">Command Prompt {">"} MehdiTohidi.com</div>
+        <div
+          className="title-bar"
+          onMouseDown={(e) => handleMouseDown(e, "windowCmd")}
+          onTouchStart={(e) => handleTouchStart(e, "windowCmd")}
+        >
+          <div className="title">Command Prompt</div>
           <button
             className="close"
             onClick={() => {
-               closeWindow("commandPrompt");
-               setSelection({
+              closeWindow("commandPrompt");
+              setSelection({
                 x: Math.min(0, 0),
                 y: Math.min(0, 0),
                 width: Math.abs(0),
                 height: Math.abs(0),
               });
-            }
-          }
+            }}
           ></button>
         </div>
         <div className="terminal">
           <div id="output">
             <div>Microsoft Windows [Version 10.0.22621.3958]</div>
             <div>(c) Microsoft Corporation. All rights reserved.</div>
+            <br />
+            <div style={{ fontSize: 12 }}>
+              Available commands: help, about, clear
+            </div>
             <br />
             {commands.map((cmd, index) => (
               <div key={index}>{cmd}</div>
@@ -402,12 +634,321 @@ const App: React.FC = () => {
         <div
           className="resize-handle"
           onMouseDown={handleResizeMouseDown}
-          onTouchStart={handleTouchStart}
+          onTouchStart={(e) => handleTouchStart(e, "windowCmd")}
         ></div>
       </div>
 
+      {/* Mehdi Tohidi */}
+      <div
+        id="windowMehdi"
+        className="window"
+        onClick={() => bringToFront("windowMehdi")}
+        style={{
+          display: openWindows.includes("profile") ? "flex" : "none",
+          transform: `translate(${position["windowMehdi"]?.x}px, ${position["windowMehdi"]?.y}px)`,
+          width: `${size.width}px`,
+          height: `${size.height}px`,
+          zIndex: zIndex["windowMehdi"],
+        }}
+      >
+        <div
+          className="title-bar"
+          style={{ backgroundColor: "darkPurple" }}
+          onMouseDown={(e) => handleMouseDown(e, "windowMehdi")}
+          onTouchStart={(e) => handleTouchStart(e, "windowMehdi")}
+        >
+          <div className="title">Mehdi Tohidi | About Me!</div>
+          <button
+            className="close"
+            onClick={() => {
+              closeWindow("profile");
+              setSelection({
+                x: Math.min(0, 0),
+                y: Math.min(0, 0),
+                width: Math.abs(0),
+                height: Math.abs(0),
+              });
+            }}
+          ></button>
+        </div>
+        <div className="aboutMe">
+          <p id="aboutText">
+            I'm Mehdi Tohidi! Currently I'm living in Iran. My Skills:
+            <ul id="skills">
+              <li>Web Developing.</li>
+              <li>Mobile App Developing.</li>
+              <li>Telegram Mini App Developing.</li>
+              <li>Telegram Bot Developing.</li>
+            </ul>
+            I love teamworks. I can speak in:
+            <ul id="skills">
+              <li>English</li>
+              <li>Persian</li>
+              <li>Kurdish: Sorani</li>
+              <li>Turkish: Azari</li>
+            </ul>
+            I'm also in AI! I love creating digital arts with Artificial
+            Intelligance.
+          </p>
+        </div>
+        <div
+          className="resize-handle"
+          onMouseDown={handleResizeMouseDown}
+          onTouchStart={(e) => handleTouchStart(e, "windowMehdi")}
+        ></div>
+      </div>
+
+      {/* Explorer */}
+
+      <div
+        id="windowExplorer"
+        className="window"
+        onClick={() => bringToFront("windowExplorer")}
+        style={{
+          display: openWindows.includes("documents") ? "flex" : "none",
+          transform: `translate(${position["windowExplorer"]?.x}px, ${position["windowExplorer"]?.y}px)`,
+          width: `${size.width}px`,
+          height: `${size.height}px`,
+          zIndex: zIndex["windowExplorer"],
+        }}
+      >
+        <div
+          className="title-bar"
+          style={{
+            backgroundColor: "darkPurple",
+          }}
+          onMouseDown={(e) => {
+            handleMouseDown(e, "windowExplorer");
+
+            const windowExplorer = document.querySelector(
+              "#windowExplorer"
+            ) as HTMLElement | null;
+            if (windowExplorer) {
+              // Get the current zIndex and convert it to a number
+              const currentZIndex =
+                parseInt(windowExplorer.style.zIndex, 10) || 0;
+
+              // Increment the zIndex
+              windowExplorer.style.zIndex = (currentZIndex + 100000).toString();
+            }
+          }}
+          onTouchStart={(e) => handleTouchStart(e, "windowExplorer")}
+        >
+          <div className="title" id="documents">
+            My Documents
+          </div>
+          <button
+            className="close"
+            onClick={() => {
+              if (music) {
+                music.pause();
+                music.currentTime = 0;
+              }
+              closeWindow("documents");
+              setSelection({
+                x: Math.min(0, 0),
+                y: Math.min(0, 0),
+                width: Math.abs(0),
+                height: Math.abs(0),
+              });
+            }}
+          ></button>
+        </div>
+        <div className="menu-bar">
+          <div className="menu-item">File</div>
+          <div className="menu-item">Edit</div>
+          <div className="menu-item">View</div>
+          <div className="menu-item">Favorites</div>
+          <div className="menu-item">Tools</div>
+          <div className="menu-item">Help</div>
+        </div>
+        <div className="address-bar">
+          <div className="address-bar-label">Address</div>
+          <input type="text" value="C:\\" readOnly />
+        </div>
+        <div className="explorer-content">
+          <div className="sidebar">
+            <div className="sidebar-item">
+              <img src={myComputerIcon} alt="My Computer" />
+              <span>MehdiTohidi.com</span>
+            </div>
+
+            {/* Add more sidebar items as needed */}
+          </div>
+          <div className="main-view">
+            <div className="file-section">
+              {files.map((file, index) => (
+                <div className="file-item" key={index}>
+                  <img src={file.icon} alt="File" />
+                  <span>{file.name}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Media Player */}
+      <div
+        id="windowMedia"
+        className="window"
+        style={{
+          display: openWindows.includes("mediaPlayer") ? "flex" : "none",
+          transform: `translate(${position["windowMedia"]?.x}px, ${position["windowMedia"]?.y}px)`,
+          width: "300px",
+          zIndex: zIndex["windowMedia"],
+        }}
+      >
+        <div
+          className="title-bar"
+          style={{
+            backgroundColor: "darkPurple",
+          }}
+          onMouseDown={(e) => {
+            turnOnLights();
+            handleMouseDown(e, "windowMedia");
+          }}
+          onTouchStart={(e) => handleTouchStart(e, "windowMedia")}
+        >
+          <div className="title" id="mediaPlayer">
+            Media Player
+          </div>
+          <button
+            className="close"
+            onClick={() => {
+              if (music) {
+                music.pause();
+                music.currentTime = 0;
+                const lights = document.querySelector(
+                  ".party-lights"
+                ) as HTMLElement | null;
+                const dancing = document.querySelector(
+                  ".dancing"
+                ) as HTMLElement | null;
+                if (dancing && lights) {
+                  dancing.style.display = "none";
+                  lights.style.display = "none";
+                }
+              }
+              closeWindow("mediaPlayer");
+              setSelection({
+                x: Math.min(0, 0),
+                y: Math.min(0, 0),
+                width: Math.abs(0),
+                height: Math.abs(0),
+              });
+            }}
+          ></button>
+        </div>
+        <div id="mediaAll">
+          <div className="screen">
+            <div className="screen-content"></div>
+          </div>
+          <div className="controls-bar">
+            <audio
+              id="music"
+              src="https://ts1.tarafdari.com/contents/user376430/content-sound/michael_jackson_-_billie_jean.mp3"
+            ></audio>
+            <button id="control-button" className="control-button prev">
+              |◀
+            </button>
+
+            <button
+              id="control-button"
+              className="control-button play"
+              onClick={() => {
+                const music = document.querySelector(
+                  "#music"
+                ) as HTMLAudioElement | null;
+                const screen =
+                  document.querySelector<HTMLElement>(".screen-content");
+                if (music && screen) {
+                  music.play();
+                  const dancing = document.querySelector(
+                    ".dancing"
+                  ) as HTMLElement | null;
+                  if (dancing) {
+                    dancing.style.display = "block";
+                  }
+                } else {
+                  console.log("Music or screen element not found");
+                }
+              }}
+            >
+              ▶
+            </button>
+
+            <button
+              id="control-button"
+              className="control-button pause"
+              onClick={() => {
+                const music = document.querySelector(
+                  "#music"
+                ) as HTMLAudioElement | null;
+                if (music) {
+                  music.pause();
+                  const dancing = document.querySelector(
+                    ".dancing"
+                  ) as HTMLElement | null;
+                  if (dancing) {
+                    dancing.style.display = "none";
+                  }
+                }
+              }}
+            >
+              ||
+            </button>
+            <button
+              id="control-button"
+              className="control-button stop"
+              onClick={() => {
+                const music = document.querySelector(
+                  "#music"
+                ) as HTMLAudioElement | null;
+                if (music) {
+                  music.pause();
+                  music.currentTime = 0;
+                  const dancing = document.querySelector(
+                    ".dancing"
+                  ) as HTMLElement | null;
+                  if (dancing) {
+                    dancing.style.display = "none";
+                  }
+                }
+              }}
+            >
+              ■
+            </button>
+          </div>
+
+          <div className="status-bar">
+            <div className="status-text">
+              {Math.floor(musicTime / 60) < 10
+                ? "0" + Math.floor(musicTime / 60)
+                : Math.floor(musicTime / 60)}
+              :{musicTime % 60 < 10 ? "0" + (musicTime % 60) : musicTime % 60}/
+              04:54
+            </div>
+            <div className="progress-bar">
+              <div className="progress-level" style={{ width: "0%" }}></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Dancing */}
+
+      <div
+        className="dancing"
+        onContextMenu={(e) => {
+          e.preventDefault();
+        }}
+      >
+        <img id="dancing" src={dance} />
+      </div>
+
       {/* Taskbar */}
-      <div className="taskbar">
+      <div className="taskbar" onContextMenu={(e) => e.preventDefault()}>
         <div className="taskbar-start">
           <div className="start-menu-button">
             <img
@@ -416,6 +957,17 @@ const App: React.FC = () => {
               alt="Start Menu"
               onClick={() => {
                 // handle start menu click
+                const startMenu = document.querySelector(
+                  ".start-menu"
+                ) as HTMLElement | null;
+
+                if (startMenu && !startMenuOpened) {
+                  startMenu.style.display = "block";
+                  setStartMenuOpened(true);
+                } else if (startMenu && startMenuOpened) {
+                  startMenu.style.display = "none";
+                  setStartMenuOpened(false);
+                }
               }}
             />
           </div>
@@ -424,33 +976,47 @@ const App: React.FC = () => {
           <div className="taskbar-clock">{current_time}</div>
         </div>
         <div className="taskbar-open-windows">
-          {openWindows.includes("myComputer") && (
+          {openWindows.includes("documents") && (
             <div className="taskbar-item">
-              <img id="taskImage"
-                src={computer}
-                alt="My Computer"
+              <img
+                id="taskImage"
+                src={myDocuments}
+                alt="My Documents"
                 className="taskbar-icon"
-                onClick={() => setSelectedWindow("myComputer")}
+                onClick={() => setSelectedWindow("documents")}
               />
-              <p id="taskbarText">My Computer</p>
+              <p id="taskbarText">My Documents</p>
             </div>
           )}
-          {openWindows.includes("recycleBin") && (
+          {openWindows.includes("mediaPlayer") && (
             <div className="taskbar-item">
-              <img id="taskImage"
-                src={trashbin}
+              <img
+                id="taskImage"
+                src={mediaPlayer}
+                alt="Media Player"
+                className="taskbar-icon"
+                onClick={() => setSelectedWindow("mediaPlayer")}
+              />
+              <p id="taskbarText">Jelly Bean Miche...</p>
+            </div>
+          )}
+          {openWindows.includes("gallery") && (
+            <div className="taskbar-item">
+              <img
+                id="taskImage"
+                src={galleryIcon}
                 alt="Recycle Bin"
                 className="taskbar-icon"
-                onClick={() => setSelectedWindow("recycleBin")}
+                onClick={() => setSelectedWindow("gallery")}
               />
-              <p id="taskbarText">Recycle Bin</p>
+              <p id="taskbarText">My Gallery</p>
             </div>
           )}
           {openWindows.includes("profile") && (
             <div className="taskbar-item">
-              <img id="taskImage"
+              <img
+                id="taskImage"
                 src={profileImg}
-
                 alt="Profile"
                 className="taskbar-icon"
                 onClick={() => setSelectedWindow("profile")}
@@ -460,7 +1026,8 @@ const App: React.FC = () => {
           )}
           {openWindows.includes("commandPrompt") && (
             <div className="taskbar-item">
-              <img id="taskImage"
+              <img
+                id="taskImage"
                 src={cmd}
                 alt="Command Prompt"
                 className="taskbar-icon"
@@ -476,25 +1043,62 @@ const App: React.FC = () => {
       <div className="icons">
         <div
           className={`program ${
-            selectedWindow === "myComputer" ? "selected" : ""
+            selectedWindow === "documents" ? "selected" : ""
           }`}
-          onClick={() => handleProgramClick("myComputer")}
-          onDoubleClick={() => handleProgramDoubleClick("myComputer")}
+          onClick={() => handleProgramClick("documents")}
+          onDoubleClick={() => handleProgramDoubleClick("documents")}
           onContextMenu={(e) => e.preventDefault()}
         >
-          <img id="iconImage" src={computer} />
-          <p id="programName">My Computer</p>
+          <img
+            id="iconImage"
+            style={{
+              width: 50,
+              height: 50,
+              marginBottom: 20,
+              justifySelf: "center",
+            }}
+            src={myDocuments}
+          />
+          <p id="programName">My Documents</p>
+        </div>
+
+        <div
+          className={`program ${
+            selectedWindow === "mediaPlayer" ? "selected" : ""
+          }`}
+          onClick={() => handleProgramClick("mediaPlayer")}
+          onDoubleClick={() => handleProgramDoubleClick("mediaPlayer")}
+          onContextMenu={(e) => e.preventDefault()}
+        >
+          <img
+            id="iconImage"
+            style={{ width: 45, justifySelf: "center", paddingBottom: 20 }}
+            src={mediaPlayer}
+          />
+          <p id="programName">
+            Jelly Bean - <br />
+            Micheal Jackson
+          </p>
         </div>
         <div
           className={`program ${
-            selectedWindow === "recycleBin" ? "selected" : ""
+            selectedWindow === "gallery" ? "selected" : ""
           }`}
-          onClick={() => handleProgramClick("recycleBin")}
-          onDoubleClick={() => handleProgramDoubleClick("recycleBin")}
+          onClick={() => handleProgramClick("gallery")}
+          onDoubleClick={() => handleProgramDoubleClick("gallery")}
           onContextMenu={(e) => e.preventDefault()}
         >
-          <img id="iconImage" src={trashbin} />
-          <p id="programName">Recycle Bin</p>
+          <img
+            id="iconImage"
+            src={galleryIcon}
+            style={{
+              width: 45,
+              height: 45,
+              marginBottom: 20,
+              justifySelf: "center",
+            }}
+          />
+          <p id="programName">My Gallery</p>
         </div>
         <div
           className={`program ${
@@ -508,7 +1112,7 @@ const App: React.FC = () => {
             id="iconImage"
             src={profileImg}
             style={{
-              width: 60,
+              width: 45,
               justifySelf: "center",
               marginBottom: "25px",
               marginTop: "20px",
@@ -528,7 +1132,7 @@ const App: React.FC = () => {
             id="iconImage"
             src={cmd}
             style={{
-              width: 60,
+              width: 45,
               justifySelf: "center",
               marginBottom: "25px",
               marginTop: "20px",
@@ -539,9 +1143,76 @@ const App: React.FC = () => {
       </div>
 
       {/* Start Menu */}
-      <div className="startMenu"></div>
+
+      <div className="start-menu">
+        <div className="start-menu-header">
+          <img
+            src={profileImg}
+            alt="User"
+            className="user-image"
+            onClick={() => {
+              const image = document.querySelector(
+                ".imageShow"
+              ) as HTMLElement | null;
+              if (image) {
+                image.style.display = "flex";
+              }
+            }}
+          />
+          <p className="username">Mehdi Tohidi</p>
+        </div>
+        <div className="start-menu-content">
+          <div className="menu-column">
+            <ul>
+              <li onClick={() => handleProgramDoubleClick("documents")}>
+                <img id="menuIcons" src={myDocuments} alt="Program" /> My
+                Documents
+              </li>
+              <li onClick={() => handleProgramDoubleClick("profile")}>
+                <img
+                  style={{ borderRadius: 5 }}
+                  src={profileImg}
+                  alt="Program"
+                />{" "}
+                Mehdi Tohidi
+              </li>
+
+              <li onClick={() => handleProgramDoubleClick("mediaPlayer")}>
+                <img src={mediaMenu} alt="Program" /> Media Player
+              </li>
+              <li onClick={() => handleProgramDoubleClick("commandPrompt")}>
+                <img src={cmd} alt="Program" /> Command Prompt
+              </li>
+            </ul>
+          </div>
+          <div className="menu-column">
+            <ul>
+              <li>
+                <img src={controlPanel} alt="Program" /> Control Panel
+              </li>
+              <li>
+                <img src={help} alt="Program" /> Help and Support
+              </li>
+              <li>
+                <img src={searchIcon} alt="Program" /> Search
+              </li>
+              <li>
+                <img src={runApp} alt="Program" /> Run...
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div className="start-menu-footer">
+          <div className="left"></div>
+          <button id="shutButton" className="shutdown">
+            <img id="offImg" src={off} />
+            Shut Down
+          </button>
+        </div>
+      </div>
 
       {/* App Container */}
+      <div id="partyLights" className="party-lights"></div>
       <div
         onMouseDown={startSelection}
         onTouchStart={startSelection}
@@ -563,16 +1234,22 @@ const App: React.FC = () => {
             <ul>
               <li onClick={() => handleMenuItemClick("refresh")}>Refresh</li>
 
-              <li onClick={() => handleMenuItemClick("new")}>New</li>
-              <li onClick={() => handleMenuItemClick("undo move")}>
-                Undo Move
+              <li onClick={() => handleMenuItemClick("socials")}>
+                My Socials:
               </li>
-              <li onClick={() => handleMenuItemClick("paste")}>Paste</li>
-              <li onClick={() => handleMenuItemClick("paste shortcut")}>
-                Paste Shortcut
+              <li onClick={() => handleMenuItemClick("instagram")}>
+                <img id="socials" src={instagram} /> @mehditohidi_
+              </li>
+              <li onClick={() => handleMenuItemClick("telegram")}>
+                <img id="socials" src={telegram} />
+                @themeht
+              </li>
+              <li onClick={() => handleMenuItemClick("contactEmail")}>
+                <img id="socials" src={email} />
+                Mehditohidi9@gmail.com
               </li>
               <li onClick={() => handleMenuItemClick("properties")}>
-                Properties
+                Contact Me For Buissness
               </li>
             </ul>
           </div>
