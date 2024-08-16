@@ -1,0 +1,48 @@
+/* styles.css */
+.notepad-container {
+  height: 100%;
+  border: 1px solid #000;
+  background-color: #ffffff; /* White background */
+  font-family: "MS Sans Serif", Geneva, sans-serif; /* XP Font */
+  display: flex;
+  flex-direction: column;
+}
+
+.menu-bar {
+  background-color: #c0c0c0; /* Gray background */
+  border-bottom: 1px solid #000; /* Border below menu bar */
+  display: flex;
+
+  padding: 2px 0;
+  font-size: 0.9rem;
+}
+
+.menu-item {
+  cursor: pointer;
+  padding: 2px 10px;
+  color: #000;
+  text-align: center;
+}
+
+.menu-item:hover {
+  background-color: #a0a0a0; /* Lighter gray on hover */
+}
+
+.notepad-textarea {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  background-color: #ffffff; /* White background for text area */
+  font-size: 1rem;
+  resize: none; /* Disable resizing */
+  overflow: auto; /* Allow scrolling if text overflows */
+  outline: none; /* Remove default focus outline */
+}
+
+.status-bar {
+  background-color: #c0c0c0; /* Gray background */
+  padding: 2px 10px;
+  border-top: 1px solid #000; /* Border on top */
+  font-size: 0.8rem;
+  text-align: right;
+}

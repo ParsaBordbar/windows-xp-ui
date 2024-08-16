@@ -2,11 +2,14 @@ import React, { useState, useRef, useEffect } from "react";
 import "./App.css";
 import "./Media.css";
 import "./Explorer.css";
+import "./Notepad.css";
+import Browser from "./Browser";
 import myComputerIcon from "./img/computer.png";
 import folderIcon from "./img/document.png";
 import fileIcon from "./img/mp3.png";
-import audiofile from "./music/music.mp3";
-import { ambience } from "./img";
+import jackson from "./music/music.mp3";
+import shajaryan from "./music/shajaryan.mp3";
+import { ambience, chrome, notepadImg } from "./img";
 import {
   computer,
   profileImg,
@@ -17,7 +20,6 @@ import {
   telegram,
   email,
   mediaPlayer,
-  playCover,
   off,
   myDocuments,
   runApp,
@@ -25,21 +27,19 @@ import {
   controlPanel,
   searchIcon,
   mediaMenu,
-  galleryIcon,
   dance,
   textIcon,
 } from "./img";
+import Notepad from "./Notepad";
 
-const screen = document.querySelector(".screen-content") as HTMLElement | null;
+//Notepad TEXT
+
+export const initial =
+  "welcome! make here your own windows! I hope you liked my website! I know it still needs more programs but it's not gonna be just windows XP! allrights are reserved to Mehditohidi.com and the windows xp rights are reserved to microsoft.com :). If you want to create cool websites get in touch with me through these ways: Email: Mehditohidi9@gmail.com | Instagram: @Mehditohidi_ | Telegram: @themeht";
 
 const App: React.FC = () => {
   const [commands, setCommands] = useState<string[]>([]);
   const music = document.querySelector("#music") as HTMLAudioElement | null;
-  const playMusic = () => {
-    if (music) {
-      music.play();
-    }
-  };
 
   //Bring the apps to front!
 
@@ -48,6 +48,8 @@ const App: React.FC = () => {
     windowMehdi: 1,
     windowMedia: 1,
     windowExplorer: 1,
+    windowBrowser: 1,
+    windowNote: 1,
   });
   const bringToFront = (windowId: string) => {
     setZIndex((prevZIndex) => {
@@ -61,19 +63,21 @@ const App: React.FC = () => {
     });
   };
 
-  const [folders] = useState([
-    { name: "Documents", icon: folderIcon },
-    { name: "Pictures", icon: folderIcon },
-  ]);
+  const lights = document.querySelector(".party-lights") as HTMLElement | null;
+  const dancing = document.querySelector(".dancing") as HTMLElement | null;
 
   const [files] = useState([
     { name: "Info.txt", icon: textIcon },
-    { name: "File2.doc", icon: fileIcon },
-    { name: "File3.pdf", icon: fileIcon },
+    { name: "Shajaryan.mp3", icon: fileIcon },
+    { name: "Micheal Jackson.mp3", icon: fileIcon },
   ]);
   const [draggingElementId, setDraggingElementId] = useState<string | null>(
     null
   );
+
+  const [noteText, setNoteText] = useState("welcome! make here your home!");
+  const [isfromfile, setisfromfile] = useState<boolean>(false);
+
   const progress = document.querySelector(
     ".progress-level"
   ) as HTMLElement | null;
@@ -81,11 +85,6 @@ const App: React.FC = () => {
   const [musicTime, setMusicTime] = useState<number>(0);
 
   //default positions for apps on launch
-
-  const defaultPositions = {
-    windowCmd: { x: 100, y: 100 },
-    windowMehdi: { x: 300, y: 100 },
-  };
 
   // new positions
 
@@ -96,6 +95,8 @@ const App: React.FC = () => {
     windowMehdi: { x: 402, y: 234 },
     windowMedia: { x: 546, y: 185 },
     windowExplorer: { x: 707, y: 116 },
+    windowBrowser: { x: 506, y: 143 },
+    windowNote: { x: 506, y: 143 },
   });
 
   const [size, setSize] = useState({ width: 300, height: 400 });
@@ -121,13 +122,7 @@ const App: React.FC = () => {
   });
   const containerRef = useRef<HTMLDivElement>(null);
   const startSelectionCoords = useRef<{ x: number; y: number } | null>(null);
-  const [windowsState, setWindowsState] = useState({
-    commandPrompt: { x: 0, y: 0, width: 600, height: 400, dragging: false },
-    mediaPlayer: { x: 0, y: 0, width: 600, height: 400, dragging: false },
-    gallery: { x: 0, y: 0, width: 600, height: 400, dragging: false },
-    profile: { x: 0, y: 0, width: 600, height: 400, dragging: false },
-  });
-
+  let currentMusic = 0;
   const handleContextMenu = (event: React.MouseEvent) => {
     event.preventDefault();
     setContextMenu({ x: event.clientX, y: event.clientY });
@@ -144,7 +139,7 @@ const App: React.FC = () => {
         if (icons) {
           icons.style.display = "none";
           setTimeout(() => {
-            icons.style.display = "block";
+            icons.style.display = "flex";
           }, 200);
         }
         // Implement refresh logic
@@ -227,8 +222,6 @@ const App: React.FC = () => {
   };
 
   useEffect(() => {
-    const music = document.querySelector("#music") as HTMLAudioElement | null;
-
     document.addEventListener("click", handleClick);
     return () => {
       document.removeEventListener("click", handleClick);
@@ -243,7 +236,9 @@ const App: React.FC = () => {
         windowCmd: { x: 49, y: 10 },
         windowMehdi: { x: 40, y: 200 },
         windowMedia: { x: 54, y: 50 },
-        windowExplorer: { x: 77, y: 150 },
+        windowExplorer: { x: 60, y: 60 },
+        windowBrowser: { x: 64, y: 50 },
+        windowNote: { x: 54, y: 50 },
       });
     };
 
@@ -521,6 +516,33 @@ const App: React.FC = () => {
     }
   };
 
+  const handleFileClick = (file: string) => {
+    if (file == "Info.txt") {
+      setisfromfile(true);
+      setNoteText("welcome! make here your own windows!");
+      handleProgramDoubleClick("notepad");
+      setSelectedWindow("windowNote");
+    } else if (file == "Shajaryan.mp3" && music) {
+      handleProgramDoubleClick("mediaPlayer");
+      currentMusic = 1;
+      music.src = shajaryan;
+      music.play();
+      if (dancing && lights) {
+        dancing.style.display = "none";
+        lights.style.display = "none";
+      }
+    } else if (file == "Micheal Jackson.mp3" && music) {
+      handleProgramDoubleClick("mediaPlayer");
+      currentMusic = 0;
+      music.src = jackson;
+      music.play();
+      if (dancing && lights) {
+        dancing.style.display = "block";
+        lights.style.display = "block";
+      }
+    }
+  };
+
   let date = new Date();
   let hour = date.getHours();
   let minute = date.getMinutes();
@@ -567,12 +589,66 @@ const App: React.FC = () => {
       height: Math.abs(0),
     });
   };
+  const shutdown = document.querySelector("#shut") as HTMLElement | null;
+  if (shutdown) {
+    shutdown.addEventListener("keydown", (event) => {
+      shutdown.style.display = "none";
+    });
+  }
 
   return (
     <div className="app">
+      <div id="shut" className="shutDown">
+        Refresh to Power on again!
+        <br />
+        <button
+          onClick={() => {
+            window.location.reload();
+          }}
+          id="refreshPage"
+        >
+          Turn on
+        </button>
+      </div>
       <div className="imageShow">
         <img id="images" src={profileImg} />
       </div>
+
+      {/* Browser */}
+
+      <div
+        id="windowBrowser"
+        onClick={() => bringToFront("windowBrowser")}
+        className="window"
+        style={{
+          display: openWindows.includes("browser") ? "flex" : "none",
+          transform: `translate(${position["windowBrowser"]?.x}px, ${position["windowBrowser"]?.y}px)`,
+
+          zIndex: zIndex["windowBrowser"],
+        }}
+      >
+        <div
+          className="title-bar"
+          onMouseDown={(e) => handleMouseDown(e, "windowBrowser")}
+          onTouchStart={(e) => handleTouchStart(e, "windowBrowser")}
+        >
+          <div className="title">Mehdi Browser </div>
+          <button
+            className="close"
+            onClick={() => {
+              closeWindow("browser");
+              setSelection({
+                x: Math.min(0, 0),
+                y: Math.min(0, 0),
+                width: Math.abs(0),
+                height: Math.abs(0),
+              });
+            }}
+          ></button>
+        </div>
+        <Browser />
+      </div>
+
       {/* Command Prompt Window */}
       <div
         id="windowCmd"
@@ -581,8 +657,7 @@ const App: React.FC = () => {
         style={{
           display: openWindows.includes("commandPrompt") ? "flex" : "none",
           transform: `translate(${position["windowCmd"]?.x}px, ${position["windowCmd"]?.y}px)`,
-          width: `${size.width}px`,
-          height: `${size.height}px`,
+
           zIndex: zIndex["windowCmd"],
         }}
       >
@@ -690,6 +765,41 @@ const App: React.FC = () => {
         ></div>
       </div>
 
+      {/* Note Pad */}
+
+      <div
+        id="windowNote"
+        className="window"
+        onClick={() => bringToFront("windowNote")}
+        style={{
+          display: openWindows.includes("notepad") ? "flex" : "none",
+          transform: `translate(${position["windowNote"]?.x}px, ${position["windowNote"]?.y}px)`,
+          zIndex: zIndex["windowNote"] || 2,
+        }}
+      >
+        <div
+          className="title-bar"
+          style={{ backgroundColor: "darkPurple" }}
+          onMouseDown={(e) => handleMouseDown(e, "windowNote")}
+          onTouchStart={(e) => handleTouchStart(e, "windowNote")}
+        >
+          <div className="title">Notepad 1.28</div>
+          <button
+            className="close"
+            onClick={() => {
+              closeWindow("notepad");
+              setSelection({
+                x: Math.min(0, 0),
+                y: Math.min(0, 0),
+                width: Math.abs(0),
+                height: Math.abs(0),
+              });
+            }}
+          ></button>
+        </div>
+        <Notepad />
+      </div>
+
       {/* Explorer */}
 
       <div
@@ -699,8 +809,6 @@ const App: React.FC = () => {
         style={{
           display: openWindows.includes("documents") ? "flex" : "none",
           transform: `translate(${position["windowExplorer"]?.x}px, ${position["windowExplorer"]?.y}px)`,
-          width: `${size.width}px`,
-          height: `${size.height}px`,
           zIndex: zIndex["windowExplorer"],
         }}
       >
@@ -742,6 +850,7 @@ const App: React.FC = () => {
             }}
           ></button>
         </div>
+
         <div className="menu-bar">
           <div className="menu-item">File</div>
           <div className="menu-item">Edit</div>
@@ -766,7 +875,11 @@ const App: React.FC = () => {
           <div className="main-view">
             <div className="file-section">
               {files.map((file, index) => (
-                <div className="file-item" key={index}>
+                <div
+                  className="file-item"
+                  key={index}
+                  onDoubleClick={() => handleFileClick(file.name)}
+                >
                   <img src={file.icon} alt="File" />
                   <span>{file.name}</span>
                 </div>
@@ -793,7 +906,6 @@ const App: React.FC = () => {
             backgroundColor: "darkPurple",
           }}
           onMouseDown={(e) => {
-            turnOnLights();
             handleMouseDown(e, "windowMedia");
           }}
           onTouchStart={(e) => handleTouchStart(e, "windowMedia")}
@@ -804,19 +916,11 @@ const App: React.FC = () => {
           <button
             className="close"
             onClick={() => {
-              if (music) {
+              if (music && lights && dancing) {
+                dancing.style.display = "none";
                 music.pause();
                 music.currentTime = 0;
-                const lights = document.querySelector(
-                  ".party-lights"
-                ) as HTMLElement | null;
-                const dancing = document.querySelector(
-                  ".dancing"
-                ) as HTMLElement | null;
-                if (dancing && lights) {
-                  dancing.style.display = "none";
-                  lights.style.display = "none";
-                }
+                lights.style.display = "none";
               }
               closeWindow("mediaPlayer");
               setSelection({
@@ -833,37 +937,14 @@ const App: React.FC = () => {
             <div className="screen-content"></div>
           </div>
           <div className="controls-bar">
-            <audio id="music" src={audiofile}></audio>
-            <button id="control-button" className="control-button prev">
-              |◀
-            </button>
+            <audio id="music" src={jackson}></audio>
 
             <button
               id="control-button"
               className="control-button play"
               onClick={() => {
-                const music = document.querySelector(
-                  "#music"
-                ) as HTMLAudioElement | null;
-                const screen =
-                  document.querySelector<HTMLElement>(".screen-content");
-                if (music && screen) {
+                if (music) {
                   music.play();
-                  screen.style.backgroundImage = "url('" + ambience + "')";
-                  const lights = document.querySelector(
-                    ".party-lights"
-                  ) as HTMLElement | null;
-                  if (lights) {
-                    lights.style.display = "block";
-                  }
-                  const dancing = document.querySelector(
-                    ".dancing"
-                  ) as HTMLElement | null;
-                  if (dancing) {
-                    dancing.style.display = "block";
-                  }
-                } else {
-                  console.log("Music or screen element not found");
                 }
               }}
             >
@@ -874,12 +955,8 @@ const App: React.FC = () => {
               id="control-button"
               className="control-button pause"
               onClick={() => {
-                const music = document.querySelector(
-                  "#music"
-                ) as HTMLAudioElement | null;
-                if (screen && music) {
+                if (music) {
                   music.pause();
-                  screen.style.backgroundImage = "url('" + playCover + "')";
                   const lights = document.querySelector(
                     ".party-lights"
                   ) as HTMLElement | null;
@@ -899,11 +976,7 @@ const App: React.FC = () => {
               id="control-button"
               className="control-button stop"
               onClick={() => {
-                const music = document.querySelector(
-                  "#music"
-                ) as HTMLAudioElement | null;
-                if (music && screen) {
-                  screen.style.backgroundImage = "url('" + playCover + "')";
+                if (music) {
                   music.pause();
                   music.currentTime = 0;
                   const lights = document.querySelector(
@@ -999,19 +1072,33 @@ const App: React.FC = () => {
                 className="taskbar-icon"
                 onClick={() => setSelectedWindow("mediaPlayer")}
               />
-              <p id="taskbarText">Jelly Bean Miche...</p>
+              <p id="taskbarText">Media Player</p>
             </div>
           )}
-          {openWindows.includes("gallery") && (
+
+          {openWindows.includes("notepad") && (
             <div className="taskbar-item">
               <img
                 id="taskImage"
-                src={galleryIcon}
+                src={notepadImg}
+                alt="Notepad"
+                className="taskbar-icon"
+                onClick={() => setSelectedWindow("notepad")}
+              />
+              <p id="taskbarText">Notepad</p>
+            </div>
+          )}
+
+          {openWindows.includes("browser") && (
+            <div className="taskbar-item">
+              <img
+                id="taskImage"
+                src={chrome}
                 alt="Recycle Bin"
                 className="taskbar-icon"
-                onClick={() => setSelectedWindow("gallery")}
+                onClick={() => setSelectedWindow("browser")}
               />
-              <p id="taskbarText">My Gallery</p>
+              <p id="taskbarText">Internet Browser</p>
             </div>
           )}
           {openWindows.includes("profile") && (
@@ -1075,24 +1162,21 @@ const App: React.FC = () => {
           <img
             id="iconImage"
             style={{ width: 45, justifySelf: "center", paddingBottom: 20 }}
-            src={mediaPlayer}
+            src={mediaMenu}
           />
-          <p id="programName">
-            Jelly Bean - <br />
-            Micheal Jackson
-          </p>
+          <p id="programName">Media Player</p>
         </div>
         <div
           className={`program ${
-            selectedWindow === "gallery" ? "selected" : ""
+            selectedWindow === "browser" ? "selected" : ""
           }`}
-          onClick={() => handleProgramClick("gallery")}
-          onDoubleClick={() => handleProgramDoubleClick("gallery")}
+          onClick={() => handleProgramClick("browser")}
+          onDoubleClick={() => handleProgramDoubleClick("browser")}
           onContextMenu={(e) => e.preventDefault()}
         >
           <img
             id="iconImage"
-            src={galleryIcon}
+            src={chrome}
             style={{
               width: 45,
               height: 45,
@@ -1100,7 +1184,7 @@ const App: React.FC = () => {
               justifySelf: "center",
             }}
           />
-          <p id="programName">My Gallery</p>
+          <p id="programName">Internet Browser</p>
         </div>
         <div
           className={`program ${
@@ -1117,7 +1201,7 @@ const App: React.FC = () => {
               width: 45,
               justifySelf: "center",
               marginBottom: "25px",
-              marginTop: "20px",
+
               borderRadius: "5px",
             }}
           />
@@ -1137,10 +1221,86 @@ const App: React.FC = () => {
               width: 45,
               justifySelf: "center",
               marginBottom: "25px",
-              marginTop: "20px",
             }}
           />
           <p id="programName">Command Prompt</p>
+        </div>
+
+        <div
+          className={`program ${
+            selectedWindow === "notepad" ? "selected" : ""
+          }`}
+          onClick={() => handleProgramClick("notepad")}
+          onDoubleClick={() => handleProgramDoubleClick("notepad")}
+        >
+          <img
+            id="iconImage"
+            src={notepadImg}
+            style={{
+              width: 45,
+              justifySelf: "center",
+              marginBottom: "25px",
+            }}
+          />
+          <p id="programName">Notepad</p>
+        </div>
+
+        <div
+          className={`program ${
+            selectedWindow === "shajaryan" ? "selected" : ""
+          }`}
+          onClick={() => {
+            handleProgramClick("shajaryan");
+          }}
+          onDoubleClick={() => {
+            if (music) {
+              if (lights && dancing) {
+                lights.style.display = "none";
+                dancing.style.display = "none";
+              }
+              music.src = shajaryan;
+              music.play();
+              currentMusic = 1;
+              handleProgramDoubleClick("mediaPlayer");
+            }
+          }}
+          onContextMenu={(e) => e.preventDefault()}
+        >
+          <img
+            id="iconImage"
+            style={{ width: 45, justifySelf: "center", paddingBottom: 20 }}
+            src={fileIcon}
+          />
+          <p id="programName">Shajaryan.mp3</p>
+        </div>
+
+        <div
+          className={`program ${
+            selectedWindow === "jackson" ? "selected" : ""
+          }`}
+          onClick={() => {
+            handleProgramClick("jackson");
+          }}
+          onDoubleClick={() => {
+            if (music) {
+              if (lights && dancing) {
+                lights.style.display = "block";
+                dancing.style.display = "block";
+              }
+              music.src = jackson;
+              music.play();
+              currentMusic = 0;
+              handleProgramDoubleClick("mediaPlayer");
+            }
+          }}
+          onContextMenu={(e) => e.preventDefault()}
+        >
+          <img
+            id="iconImage"
+            style={{ width: 45, justifySelf: "center", paddingBottom: 20 }}
+            src={fileIcon}
+          />
+          <p id="programName">Micheal Jackson.mp3</p>
         </div>
       </div>
 
@@ -1166,6 +1326,10 @@ const App: React.FC = () => {
         <div className="start-menu-content">
           <div className="menu-column">
             <ul>
+              <li onClick={() => handleProgramDoubleClick("browser")}>
+                <img id="menuIcons" src={chrome} alt="Program" /> Internet
+                Browser
+              </li>
               <li onClick={() => handleProgramDoubleClick("documents")}>
                 <img id="menuIcons" src={myDocuments} alt="Program" /> My
                 Documents
@@ -1182,6 +1346,9 @@ const App: React.FC = () => {
               <li onClick={() => handleProgramDoubleClick("mediaPlayer")}>
                 <img src={mediaMenu} alt="Program" /> Media Player
               </li>
+              <li onClick={() => handleProgramDoubleClick("notepad")}>
+                <img src={notepadImg} alt="Program" /> Notepad
+              </li>
               <li onClick={() => handleProgramDoubleClick("commandPrompt")}>
                 <img src={cmd} alt="Program" /> Command Prompt
               </li>
@@ -1189,24 +1356,37 @@ const App: React.FC = () => {
           </div>
           <div className="menu-column">
             <ul>
-              <li>
-                <img src={controlPanel} alt="Program" /> Control Panel
+              <li
+                onClick={() => {
+                  window.open("https://instagram.com/mehditohidi_", "_blank");
+                }}
+              >
+                <img src={instagram} alt="Program" /> MehdiTohidi_
               </li>
-              <li>
-                <img src={help} alt="Program" /> Help and Support
-              </li>
-              <li>
-                <img src={searchIcon} alt="Program" /> Search
-              </li>
-              <li>
-                <img src={runApp} alt="Program" /> Run...
+              <li
+                onClick={() => {
+                  window.open("https://t.me/Themeht", "_blank");
+                }}
+              >
+                <img src={telegram} alt="Program" /> Themeht
               </li>
             </ul>
           </div>
         </div>
         <div className="start-menu-footer">
           <div className="left"></div>
-          <button id="shutButton" className="shutdown">
+          <button
+            id="shutButton"
+            className="shutdown"
+            onClick={() => {
+              const shutdown = document.querySelector(
+                "#shut"
+              ) as HTMLElement | null;
+              if (shutdown) {
+                shutdown.style.display = "flex";
+              }
+            }}
+          >
             <img id="offImg" src={off} />
             Shut Down
           </button>

@@ -1,0 +1,96 @@
+.browser {
+  height: 100%;
+  border: 2px solid #ccc;
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  background-color: #f2f2f2;
+}
+
+.browser-header {
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  background-color: #e5e5e5;
+  border-bottom: 1px solid #ccc;
+}
+
+.browser-buttons {
+  display: flex;
+  margin-right: 12px;
+}
+
+.button {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+.browser-url {
+  flex-grow: 1;
+  padding: 5px 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.browser-bookmarks {
+  display: flex;
+  padding: 8px;
+  background-color: #e5e5e5;
+  border-bottom: 1px solid #ccc;
+}
+
+.bookmark-button {
+  background-color: blueviolet;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 5px 10px;
+  margin-right: 8px;
+  cursor: pointer;
+  color: white;
+}
+
+.bookmark-button:hover {
+  background-color: #ddd;
+  color: blueviolet;
+}
+
+.browser-content {
+  flex-grow: 1;
+  background-color: white;
+  display: flex;
+}
+
+.browser-content iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+#inputUrl {
+  color: rgb(93, 93, 93);
+}
+#goUrl {
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  margin-right: 10px;
+}
+#goImage {
+  width: 35px;
+  height: 35px;
+}
+@media (max-width: 768px) {
+  .browser {
+    width: 100%;
+    height: auto;
+  }
+
+  .browser-content iframe {
+    height: 400px; /* Set a fixed height for the iframe on mobile */
+  }
+}

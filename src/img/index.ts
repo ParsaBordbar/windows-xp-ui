@@ -20,7 +20,13 @@ import galleryIcon from './gallery.png';
 import ambience from './ambience.gif';
 import dance from './dance.gif';
 import textIcon from './text.png';
+import searchUrl from './search.svg';
+import chrome from './chrome.png';
+import notepadImg from './notepad.png';
 export {
+    notepadImg,
+    chrome,
+    searchUrl,
     textIcon,
     dance,
     ambience,
