@@ -806,3 +806,16 @@ input[type="text"] {
   font-weight: bold;
   cursor: pointer;
 }
+
+#windowProperties {
+  width: 350px;
+  height: 270px;
+}
+
+/* Styles for mobile devices */
+@media (max-width: 767px) {
+  #windowProperties {
+    width: 80vw;
+    height: 50vh;
+  }
+}

@@ -1,0 +1,111 @@
+.properties-window {
+  box-shadow: 2px 2px 5px #000000;
+  background-color: #ece9d8;
+  height: 100%;
+}
+
+.title-bar {
+  height: 24px;
+  background: linear-gradient(to bottom, #00008b, #1e90ff);
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.title-bar-text {
+  margin-left: 5px;
+  font-weight: bold;
+}
+
+.title-bar-controls button {
+  width: 16px;
+  height: 14px;
+  margin: 4px;
+  border: none;
+  background-color: white;
+  color: black;
+}
+
+.title-bar-controls button[aria-label="Close"] {
+  background-color: red;
+}
+
+.window-body {
+  padding: 10px;
+}
+
+.tab-menu {
+  display: flex;
+  border-bottom: 1px solid #808080;
+  margin-bottom: 10px;
+}
+
+.tab {
+  padding: 5px 10px;
+  cursor: pointer;
+  border: 1px solid #c0c0c0;
+  border-bottom: none;
+  background-color: #e0e0e0;
+}
+
+.tab.selected {
+  background-color: #ffffff;
+  border-top: 2px solid #ffffff;
+}
+
+.wallpaper-selection {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.wallpaper-preview {
+  width: 200px;
+  height: 150px;
+  border: 1px solid #c0c0c0;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-image: url("./img/bg.jpg");
+}
+
+.wallpaper.bliss {
+  background-image: url("./img/bg.jpg");
+}
+
+.wallpaper.autumn {
+  background-image: url("./img/bg2.jpg");
+}
+
+.wallpaper.winter {
+  background-image: url("./img/bg3.jpg");
+}
+
+.wallpaper.custom {
+  background-image: url("./img/bg4.jpg");
+}
+
+.wallpaper-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.window-footer {
+  display: flex;
+  justify-content: flex-end;
+
+  margin-top: 10px;
+}
+
+.btn {
+  width: 30%;
+  margin-left: 5px;
+  padding: 2px 8px;
+  border: 1px solid #c0c0c0;
+  background-color: #e0e0e0;
+  cursor: pointer;
+}
+
+.btn:hover {
+  background-color: #d4d0c8;
+}

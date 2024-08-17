@@ -5,11 +5,15 @@ import "./Explorer.css";
 import "./Notepad.css";
 import Browser from "./Browser";
 import myComputerIcon from "./img/computer.png";
-import folderIcon from "./img/document.png";
 import fileIcon from "./img/mp3.png";
 import jackson from "./music/music.mp3";
 import shajaryan from "./music/shajaryan.mp3";
-import { ambience, chrome, notepadImg } from "./img";
+import { chrome, notepadImg } from "./img";
+import "./Properties.css";
+import bg from "./img/bg.jpg";
+import bg2 from "./img/bg4.jpg";
+import bg3 from "./img/bg3.jpg";
+import bg4 from "./img/bg2.jpg";
 import {
   computer,
   profileImg,
@@ -50,6 +54,7 @@ const App: React.FC = () => {
     windowExplorer: 1,
     windowBrowser: 1,
     windowNote: 1,
+    windowProperties: 1,
   });
   const bringToFront = (windowId: string) => {
     setZIndex((prevZIndex) => {
@@ -62,6 +67,14 @@ const App: React.FC = () => {
       return newZIndex;
     });
   };
+
+  function formatDuration(seconds: number) {
+    const minutes = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    const minutesStr = minutes.toString().padStart(2, "0");
+    const secondsStr = secs.toString().padStart(2, "0");
+    return `${minutesStr}:${secondsStr}`;
+  }
 
   const lights = document.querySelector(".party-lights") as HTMLElement | null;
   const dancing = document.querySelector(".dancing") as HTMLElement | null;
@@ -97,6 +110,7 @@ const App: React.FC = () => {
     windowExplorer: { x: 707, y: 116 },
     windowBrowser: { x: 506, y: 143 },
     windowNote: { x: 506, y: 143 },
+    windowProperties: { x: 506, y: 143 },
   });
 
   const [size, setSize] = useState({ width: 300, height: 400 });
@@ -120,6 +134,7 @@ const App: React.FC = () => {
     width: 0,
     height: 0,
   });
+
   const containerRef = useRef<HTMLDivElement>(null);
   const startSelectionCoords = useRef<{ x: number; y: number } | null>(null);
   let currentMusic = 0;
@@ -145,7 +160,7 @@ const App: React.FC = () => {
         // Implement refresh logic
         break;
       case "properties":
-        console.log("Properties action triggered");
+        handleProgramDoubleClick("properties");
         // Implement properties logic
         break;
       case "socials":
@@ -239,6 +254,7 @@ const App: React.FC = () => {
         windowExplorer: { x: 60, y: 60 },
         windowBrowser: { x: 64, y: 50 },
         windowNote: { x: 54, y: 50 },
+        windowProperties: { x: 62, y: 42 },
       });
     };
 
@@ -440,7 +456,7 @@ const App: React.FC = () => {
 
       setCommands((prev) => [
         ...prev,
-        `C:\\Users\\MehdiTohidi> ${command}`,
+        `C:\\Users\\MehdiTohidi\\Desktop> ${command}`,
         response,
       ]);
       inputField.value = "";
@@ -649,6 +665,38 @@ const App: React.FC = () => {
         <Browser />
       </div>
 
+      <div
+        id="windowProperties"
+        onClick={() => bringToFront("properties")}
+        className="window"
+        style={{
+          display: openWindows.includes("properties") ? "flex" : "none",
+          transform: `translate(${position["windowProperties"]?.x}px, ${position["windowProperties"]?.y}px)`,
+          zIndex: zIndex["windowProperties"],
+        }}
+      >
+        <div
+          className="title-bar"
+          onMouseDown={(e) => handleMouseDown(e, "windowProperties")}
+          onTouchStart={(e) => handleTouchStart(e, "windowProperties")}
+        >
+          <div className="title">Properties</div>
+          <button
+            className="close"
+            onClick={() => {
+              closeWindow("properties");
+              setSelection({
+                x: Math.min(0, 0),
+                y: Math.min(0, 0),
+                width: Math.abs(0),
+                height: Math.abs(0),
+              });
+            }}
+          ></button>
+        </div>
+        {WindowsXPDisplayProperties()}
+      </div>
+
       {/* Command Prompt Window */}
       <div
         id="windowCmd"
@@ -693,7 +741,7 @@ const App: React.FC = () => {
               <div key={index}>{cmd}</div>
             ))}
             <div className="input-line">
-              <span className="prompt">C:\Users\MehdiTohidi{">"}</span>
+              <span className="prompt">C:\Users\MehdiTohidi\Desktop{">"}</span>
               <input type="text" autoFocus onKeyDown={handleKeyDown} />
             </div>
           </div>
@@ -1002,7 +1050,7 @@ const App: React.FC = () => {
                 ? "0" + Math.floor(musicTime / 60)
                 : Math.floor(musicTime / 60)}
               :{musicTime % 60 < 10 ? "0" + (musicTime % 60) : musicTime % 60}/
-              04:54
+              {music ? formatDuration(music.duration) : "00:00"}
             </div>
             <div className="progress-bar">
               <div className="progress-level" style={{ width: "0%" }}></div>
@@ -1370,6 +1418,15 @@ const App: React.FC = () => {
               >
                 <img src={telegram} alt="Program" /> Themeht
               </li>
+              <li onClick={() => handleProgramDoubleClick("")}>
+                <img src={controlPanel} alt="Program" /> Control Panel
+              </li>
+              <li onClick={() => handleProgramDoubleClick("")}>
+                <img src={searchIcon} alt="Program" /> Search
+              </li>
+              <li onClick={() => handleProgramDoubleClick("")}>
+                <img src={help} alt="Program" /> Help and Suppot
+              </li>
             </ul>
           </div>
         </div>
@@ -1430,8 +1487,11 @@ const App: React.FC = () => {
                 <img id="socials" src={email} />
                 Mehditohidi9@gmail.com
               </li>
-              <li onClick={() => handleMenuItemClick("properties")}>
+              <li onClick={() => handleMenuItemClick("contactEmail")}>
                 Contact Me For Buissness
+              </li>
+              <li onClick={() => handleMenuItemClick("properties")}>
+                Properties
               </li>
             </ul>
           </div>
@@ -1451,6 +1511,94 @@ const App: React.FC = () => {
       </div>
     </div>
   );
-};
 
+  //Properties
+  function WindowsXPDisplayProperties() {
+    const wallpapers = { bg, bg2, bg3, bg4 };
+
+    // Mapping of wallpaper keys to custom display names
+    const wallpaperNames = {
+      bg: "Bliss",
+      bg2: "Autumn Leaves",
+      bg3: "Mountain Peak",
+      bg4: "Serene Lake",
+    };
+
+    // Load the initial wallpaper from local storage or default to "bg"
+    const getInitialWallpaper = () => {
+      const savedWallpaper = localStorage.getItem("selectedWallpaper");
+      return savedWallpaper
+        ? (savedWallpaper as keyof typeof wallpapers)
+        : "bg";
+    };
+
+    const [selectedWallpaper, setSelectedWallpaper] =
+      useState<keyof typeof wallpapers>(getInitialWallpaper);
+
+    useEffect(() => {
+      // Set the body background image when the component mounts
+      document.body.style.backgroundImage = `url(${wallpapers[selectedWallpaper]})`;
+    }, [selectedWallpaper, wallpapers]);
+
+    const handleOkClick = () => {
+      // Save the selected wallpaper to local storage
+      localStorage.setItem("selectedWallpaper", selectedWallpaper);
+      // Change the body background image to the selected wallpaper
+      document.body.style.backgroundImage = `url(${wallpapers[selectedWallpaper]})`;
+      closeWindow("properties");
+    };
+
+    return (
+      <div className="properties-window">
+        <div className="window-body">
+          <div className="tab-menu">
+            <div className="tab">Themes</div>
+            <div className="tab selected">Desktop</div>
+            <div className="tab">Settings</div>
+          </div>
+          <div className="content">
+            <div className="wallpaper-selection">
+              <div
+                className="wallpaper-preview"
+                style={{
+                  backgroundImage: `url(${wallpapers[selectedWallpaper]})`,
+                }}
+              >
+                <div
+                  className={`wallpaper ${selectedWallpaper.toLowerCase()}`}
+                ></div>
+              </div>
+              <div className="wallpaper-list">
+                <label htmlFor="wallpaper">Background:</label>
+                <select
+                  id="wallpaper"
+                  value={selectedWallpaper}
+                  onChange={(e) => {
+                    setSelectedWallpaper(
+                      e.target.value as keyof typeof wallpapers
+                    );
+                  }}
+                >
+                  {Object.keys(wallpaperNames).map((wallpaper) => (
+                    <option key={wallpaper} value={wallpaper}>
+                      {wallpaperNames[wallpaper as keyof typeof wallpaperNames]}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          </div>
+          <div className="window-footer">
+            <button className="btn" onClick={handleOkClick}>
+              OK
+            </button>
+            <button className="btn" onClick={() => closeWindow("properties")}>
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+};
 export default App;
