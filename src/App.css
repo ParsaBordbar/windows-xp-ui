@@ -819,3 +819,20 @@ input[type="text"] {
     height: 50vh;
   }
 }
+
+#windowgame {
+  width: 80vw;
+  height: 80vh;
+}
+
+/* Styles for mobile devices */
+@media (max-width: 767px) {
+  #windowgame {
+    width: 80vw;
+    height: 50vh;
+  }
+}
+#game {
+  height: 100%;
+  tabindex: 0;
+}

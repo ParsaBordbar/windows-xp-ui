@@ -23,7 +23,9 @@ import textIcon from './text.png';
 import searchUrl from './search.svg';
 import chrome from './chrome.png';
 import notepadImg from './notepad.png';
+import game from './game.png';
 export {
+    game,
     notepadImg,
     chrome,
     searchUrl,

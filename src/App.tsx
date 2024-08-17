@@ -8,7 +8,7 @@ import myComputerIcon from "./img/computer.png";
 import fileIcon from "./img/mp3.png";
 import jackson from "./music/music.mp3";
 import shajaryan from "./music/shajaryan.mp3";
-import { chrome, notepadImg } from "./img";
+import { chrome, game, notepadImg } from "./img";
 import "./Properties.css";
 import bg from "./img/bg.jpg";
 import bg2 from "./img/bg4.jpg";
@@ -55,6 +55,7 @@ const App: React.FC = () => {
     windowBrowser: 1,
     windowNote: 1,
     windowProperties: 1,
+    windowgame: 1,
   });
   const bringToFront = (windowId: string) => {
     setZIndex((prevZIndex) => {
@@ -111,6 +112,7 @@ const App: React.FC = () => {
     windowBrowser: { x: 506, y: 143 },
     windowNote: { x: 506, y: 143 },
     windowProperties: { x: 506, y: 143 },
+    windowgame: { x: 506, y: 143 },
   });
 
   const [size, setSize] = useState({ width: 300, height: 400 });
@@ -255,6 +257,7 @@ const App: React.FC = () => {
         windowBrowser: { x: 64, y: 50 },
         windowNote: { x: 54, y: 50 },
         windowProperties: { x: 62, y: 42 },
+        windowgame: { x: 62, y: 42 },
       });
     };
 
@@ -813,6 +816,46 @@ const App: React.FC = () => {
         ></div>
       </div>
 
+      {/* game  */}
+
+      <div
+        id="windowgame"
+        className="window"
+        onClick={() => bringToFront("windowgame")}
+        style={{
+          display: openWindows.includes("game") ? "flex" : "none",
+          transform: `translate(${position["windowgame"]?.x}px, ${position["windowgame"]?.y}px)`,
+          zIndex: zIndex["windowgame"],
+        }}
+      >
+        <div
+          className="title-bar"
+          style={{ backgroundColor: "darkPurple" }}
+          onMouseDown={(e) => handleMouseDown(e, "windowgame")}
+          onTouchStart={(e) => handleTouchStart(e, "windowgame")}
+        >
+          <div className="title">Play T-Rex | MehdiTohidi.com</div>
+          <button
+            className="close"
+            onClick={() => {
+              closeWindow("game");
+              setSelection({
+                x: Math.min(0, 0),
+                y: Math.min(0, 0),
+                width: Math.abs(0),
+                height: Math.abs(0),
+              });
+            }}
+          ></button>
+        </div>
+        <iframe id="game" src="https://dancemonkey.fun/trex"></iframe>
+        <div
+          className="resize-handle"
+          onMouseDown={handleResizeMouseDown}
+          onTouchStart={(e) => handleTouchStart(e, "windowMehdi")}
+        ></div>
+      </div>
+
       {/* Note Pad */}
 
       <div
@@ -1124,6 +1167,19 @@ const App: React.FC = () => {
             </div>
           )}
 
+          {openWindows.includes("game") && (
+            <div className="taskbar-item">
+              <img
+                id="taskImage"
+                src={game}
+                alt="Media Player"
+                className="taskbar-icon"
+                onClick={() => setSelectedWindow("game")}
+              />
+              <p id="taskbarText">Play T-Rex</p>
+            </div>
+          )}
+
           {openWindows.includes("notepad") && (
             <div className="taskbar-item">
               <img
@@ -1294,6 +1350,23 @@ const App: React.FC = () => {
         </div>
 
         <div
+          className={`program ${selectedWindow === "game" ? "selected" : ""}`}
+          onClick={() => handleProgramClick("game")}
+          onDoubleClick={() => handleProgramDoubleClick("game")}
+        >
+          <img
+            id="iconImage"
+            src={game}
+            style={{
+              width: 45,
+              justifySelf: "center",
+              marginBottom: "25px",
+            }}
+          />
+          <p id="programName">T-Rex Game</p>
+        </div>
+
+        <div
           className={`program ${
             selectedWindow === "shajaryan" ? "selected" : ""
           }`}
@@ -1396,6 +1469,9 @@ const App: React.FC = () => {
               </li>
               <li onClick={() => handleProgramDoubleClick("notepad")}>
                 <img src={notepadImg} alt="Program" /> Notepad
+              </li>
+              <li onClick={() => handleProgramDoubleClick("game")}>
+                <img src={game} alt="Program" /> Play T-Rex
               </li>
               <li onClick={() => handleProgramDoubleClick("commandPrompt")}>
                 <img src={cmd} alt="Program" /> Command Prompt
