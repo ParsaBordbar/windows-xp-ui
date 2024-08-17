@@ -112,7 +112,7 @@ const App: React.FC = () => {
     windowBrowser: { x: 506, y: 143 },
     windowNote: { x: 506, y: 143 },
     windowProperties: { x: 506, y: 143 },
-    windowgame: { x: 506, y: 143 },
+    windowgame: { x: 0, y: 0 },
   });
 
   const [size, setSize] = useState({ width: 300, height: 400 });
@@ -257,7 +257,7 @@ const App: React.FC = () => {
         windowBrowser: { x: 64, y: 50 },
         windowNote: { x: 54, y: 50 },
         windowProperties: { x: 62, y: 42 },
-        windowgame: { x: 62, y: 42 },
+        windowgame: { x: 10, y: 0 },
       });
     };
 
