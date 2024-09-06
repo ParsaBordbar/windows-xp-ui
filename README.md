@@ -1,10 +1,14 @@
-# Getting Started with Create React App
+# Javascript Windows XP
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Demo: https://xp.mehditohidi.com
 
 ## Available Scripts
 
 In the project directory, you can run:
+
+### `npm install`
+
+Then Run:
 
 ### `npm start`
 
