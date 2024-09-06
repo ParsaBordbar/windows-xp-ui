@@ -2,6 +2,9 @@
 
 Demo: https://xp.mehditohidi.com
 
+![Alt text](public/demo.png)
+
+
 ## Available Scripts
 
 In the project directory, you can run:
