@@ -807,6 +807,8 @@ const App: React.FC = () => {
             </ul>
             I'm also in AI! I love creating digital arts with Artificial
             Intelligance.
+            <br />
+            <a href="mehditohidi.com">Check my website </a>
           </p>
         </div>
         <div
