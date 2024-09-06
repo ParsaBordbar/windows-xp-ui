@@ -1,4 +1,4 @@
-# Javascript Windows XP
+# Typescript Windows XP
 
 Demo: https://xp.mehditohidi.com
 
