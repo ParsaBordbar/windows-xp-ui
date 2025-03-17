@@ -24,6 +24,7 @@ import searchUrl from './search.svg';
 import chrome from './chrome.png';
 import notepadImg from './notepad.png';
 import game from './game.png';
+import gtaSa from './gtaSa.jpg'
 export {
     game,
     notepadImg,
@@ -50,5 +51,6 @@ export {
     instagram,
     telegram,
     mediaPlayer,
-    off
+    off,
+    gtaSa
 }
