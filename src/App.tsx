@@ -33,13 +33,18 @@ import {
   mediaMenu,
   dance,
   textIcon,
+  gtaSa
 } from "./img";
 import Notepad from "./Notepad";
 
 //Notepad TEXT
 
 export const initial =
-  "welcome! make here your own windows! I hope you liked my website! I know it still needs more programs but it's not gonna be just windows XP! allrights are reserved to Mehditohidi.com and the windows xp rights are reserved to microsoft.com :). If you want to create cool websites get in touch with me through these ways: Email: Mehditohidi9@gmail.com | Instagram: @Mehditohidi_ | Telegram: @themeht";
+  `welcome! make here your own windows! I hope you liked my website! I know it still needs more programs but it's not gonna be just windows XP! allrights are reserved to Mehditohidi.com and the windows xp rights are reserved to microsoft.com :). If you want to create cool websites get in touch with me through these ways: Email: Mehditohidi9@gmail.com | Instagram: @Mehditohidi_ | Telegram: @themeht
+  
+  PR: Added by ParsaBordbar -> More accurate Icons and some small color changes 
+  ps: Also added GTA sa icon, I'll add the loading of the game and the menu too in future!
+  `;
 
 const App: React.FC = () => {
   const [commands, setCommands] = useState<string[]>([]);
@@ -1244,7 +1249,32 @@ const App: React.FC = () => {
           onDoubleClick={() => handleProgramDoubleClick("documents")}
           onContextMenu={(e) => e.preventDefault()}
         >
+
+
+      <div
+          className={`program ${
+            selectedWindow === "documents" ? "selected" : ""
+          }`}
+          onClick={() => handleProgramClick("documents")}
+          onDoubleClick={() => handleProgramDoubleClick("documents")}
+          onContextMenu={(e) => e.preventDefault()}
+        >
           <img
+          alt="icon"
+            id="iconImage"
+            style={{
+              width: 50,
+              height: 50,
+              marginBottom: 20,
+              justifySelf: "center",
+            }}
+            src={computer}
+          />
+          <p id="programName">My Computer</p>
+        </div>
+
+          <img
+          alt="icon"
             id="iconImage"
             style={{
               width: 50,
@@ -1255,6 +1285,28 @@ const App: React.FC = () => {
             src={myDocuments}
           />
           <p id="programName">My Documents</p>
+        </div>
+
+        <div
+          className={`program ${
+            selectedWindow === "documents" ? "selected" : ""
+          }`}
+          onClick={() => handleProgramClick("documents")}
+          onDoubleClick={() => handleProgramDoubleClick("documents")}
+          onContextMenu={(e) => e.preventDefault()}
+        >
+          <img
+          alt="icon"
+            id="iconImage"
+            style={{
+              width: 50,
+              height: 50,
+              marginBottom: 20,
+              justifySelf: "center",
+            }}
+            src={gtaSa}
+          />
+          <p id="programName">GTA SA</p>
         </div>
 
         <div
