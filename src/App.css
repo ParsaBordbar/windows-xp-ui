@@ -95,7 +95,7 @@ input[type="text"] {
   bottom: 0;
   width: 100%;
   height: 40px; /* Height similar to the Windows taskbar */
-  background: linear-gradient(to bottom, #3B77BC, #3F83C4);
+  background: linear-gradient(to top, #00008b, #1e90ff);
   color: #ffffff; /* Text color */
   box-shadow: 0 -1px 5px rgba(0, 0, 0, 0.2); /* Subtle shadow */
   display: flex;
@@ -114,7 +114,7 @@ input[type="text"] {
 /* Taskbar Clock */
 .taskbar-end {
   position: absolute;
-  right: 20px; /* Adjusted to be properly visible */
+  right: 30px; /* Adjusted to be properly visible */
   z-index: 10001; /* Ensure Start icon is above other taskbar items */
 }
 .taskbar-open-windows {
@@ -146,8 +146,8 @@ input[type="text"] {
 }
 
 .taskbar-icon {
-  width: 35px; /* Size of taskbar icons */
-  height: 35px;
+  width: 16px; /* Size of taskbar icons */
+  height: 16px;
   margin-right: 1px; /* Space between icons */
   z-index: 10002; /* Ensure icons are above the Start icon */
 }
@@ -155,11 +155,12 @@ input[type="text"] {
   margin-left: 5px;
 }
 .taskbar-clock {
-  margin-left: auto;
   font-size: 14px;
   font-weight: bold;
   font-family: monospace;
   user-select: none;
+  background-color: #00008b;
+  padding: 12px 60px;
 }
 
 /* Optional: Styling for start menu or system tray (placeholders) */
@@ -305,8 +306,8 @@ input[type="text"] {
   color: #ffffff;
 }
 #taskImage {
-  width: 30px;
-  height: 30px;
+  width: 16px;
+  height: 16px;
   border-radius: 2px;
 }
 .aboutMe {
