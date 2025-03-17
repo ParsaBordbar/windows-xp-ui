@@ -1204,7 +1204,7 @@ const App: React.FC = () => {
                 className="taskbar-icon"
                 onClick={() => setSelectedWindow("browser")}
               />
-              <p id="taskbarText">Internet Browser</p>
+              <p id="taskbarText">Google Chrome</p>
             </div>
           )}
           {openWindows.includes("profile") && (
@@ -1290,7 +1290,7 @@ const App: React.FC = () => {
               justifySelf: "center",
             }}
           />
-          <p id="programName">Internet Browser</p>
+          <p id="programName">Google Chrome</p>
         </div>
         <div
           className={`program ${
@@ -1450,8 +1450,8 @@ const App: React.FC = () => {
           <div className="menu-column">
             <ul>
               <li onClick={() => handleProgramDoubleClick("browser")}>
-                <img id="menuIcons" src={chrome} alt="Program" /> Internet
-                Browser
+                <img id="menuIcons" src={chrome} alt="Program" />
+                Google Chrome 
               </li>
               <li onClick={() => handleProgramDoubleClick("documents")}>
                 <img id="menuIcons" src={myDocuments} alt="Program" /> My
