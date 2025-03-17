@@ -95,7 +95,7 @@ input[type="text"] {
   bottom: 0;
   width: 100%;
   height: 40px; /* Height similar to the Windows taskbar */
-  background: linear-gradient(to right, #0078d4, #1a1a1a);
+  background: linear-gradient(to bottom, #3B77BC, #3F83C4);
   color: #ffffff; /* Text color */
   box-shadow: 0 -1px 5px rgba(0, 0, 0, 0.2); /* Subtle shadow */
   display: flex;
